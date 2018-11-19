@@ -1,5 +1,7 @@
 package com.parity.paritysync.utils.parity.result;
 
+import java.util.Optional;
+
 public class ResultGetTransactionReceipt {
 
     private Integer id;
@@ -24,8 +26,8 @@ public class ResultGetTransactionReceipt {
         this.jsonrpc = jsonrpc;
     }
 
-    public ResultTransactionReceipt getResult() {
-        return result;
+    public Optional<ResultTransactionReceipt> getResult() {
+        return Optional.ofNullable(result);
     }
 
     public void setResult(ResultTransactionReceipt result) {

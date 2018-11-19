@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BlockService {
@@ -41,6 +42,10 @@ public class BlockService {
 
     public Block selectByPrimaryKey(Long number) {
         return blockMapper.selectByPrimaryKey(number);
+    }
+
+    public Optional<Block> selectOptionalByPrimaryKey(Long number) {
+        return Optional.ofNullable(blockMapper.selectByPrimaryKey(number));
     }
 
     public Block selectByHash(String hash) {

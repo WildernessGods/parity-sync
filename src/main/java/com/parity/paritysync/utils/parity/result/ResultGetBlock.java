@@ -27,7 +27,7 @@ public class ResultGetBlock {
     }
 
     public Optional<ResultBlock> getResult() {
-        return Optional.of(result);
+        return Optional.ofNullable(result);
     }
 
     public void setResult(ResultBlock result) {

@@ -1,5 +1,7 @@
 package com.parity.paritysync.utils.parity.result;
 
+import java.util.Optional;
+
 public class ResultCommon {
 
     private Integer id;
@@ -24,8 +26,8 @@ public class ResultCommon {
         this.jsonrpc = jsonrpc;
     }
 
-    public String getResult() {
-        return result;
+    public Optional<String> getResult() {
+        return Optional.ofNullable(result);
     }
 
     public void setResult(String result) {

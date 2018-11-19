@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
@@ -73,19 +74,26 @@ public class ParityUpdateUtil {
 
         try {
             ResultCommon blockNumber = ParityRequest.eth_blockNumber();
-            logger.info("blockNumber = " + blockNumber.getResult());
-            if (blockService.selectByPrimaryKey(Long.valueOf(blockNumber.getResult().substring(2), 16)) == null) {
+            blockNumber.getResult().ifPresent(result -> {
+                logger.info("blockNumber = " + result);
+                if (blockService.selectByPrimaryKey(Long.valueOf(result.substring(2), 16)) == null) {
+                    try {
+                        ResultGetBlock resultGetBlock = ParityRequest.eth_getBlockByNumber(result);
 
-                ResultGetBlock resultGetBlock = ParityRequest.eth_getBlockByNumber(blockNumber.getResult());
-                resultGetBlock.getResult().ifPresent(resultBlock -> {
-                    blockService.insertSelective(new Block(resultBlock, utils));
+                        resultGetBlock.getResult().ifPresent(resultBlock -> {
+                            blockService.insertSelective(new Block(resultBlock, utils));
 
-                    insertUncles(resultBlock.getUncles(), resultBlock.getHash(), Long.valueOf(resultBlock.getNumber().substring(2), 16));
-                    insertTransactions(resultBlock.getTransactions(), Long.valueOf(blockNumber.getResult().substring(2), 16), resultBlock.getTimestamp(),
-                            resultBlock.getUncles().size());
-                    insertParentBlock(resultBlock);
-                });
-            }
+                            insertUncles(resultBlock.getUncles(), resultBlock.getHash(), Long.valueOf(resultBlock.getNumber().substring(2), 16));
+                            insertTransactions(resultBlock.getTransactions(), Long.valueOf(result.substring(2), 16), resultBlock.getTimestamp(),
+                                    resultBlock.getUncles().size());
+                            insertParentBlock(resultBlock);
+                        });
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
@@ -141,15 +149,21 @@ public class ParityUpdateUtil {
             try {
                 ResultGetBlock resultGetBlock = ParityRequest.eth_getBlockByNumber("0x" + Long.toHexString(i));
                 resultGetBlock.getResult().ifPresent(resultBlock -> {
-                    Block block = blockService.selectByPrimaryKey(i);
-                    if (block == null) {
+
+                    Optional<Block> blockOptional = blockService.selectOptionalByPrimaryKey(i);
+                    Block block = blockOptional.orElseGet(() -> {
                         logger.info("insert block number = " + i);
-                        block = new Block(resultBlock, utils);
-                        blockService.insertSelective(block);
-                    }
+                        Block innerBlock = new Block(resultBlock, utils);
+                        blockService.insertSelective(innerBlock);
+                        return innerBlock;
+                    });
+
                     insertTransactions(resultBlock.getTransactions(), i, block.getTimestamp(), block.getUnclecount());
                     insertUncles(resultBlock.getUncles(), block.getHash(), i);
-                    insertAuthor(resultBlock.getAuthor(), 0);
+
+                    if (authorService.selectByAddress(resultBlock.getAuthor()) == null) {
+                        authorService.insertSelective(new Author(resultBlock.getAuthor(), 0));
+                    }
                 });
             } catch (IOException e) {
                 logger.error("insertParity " + e.getMessage());
@@ -240,11 +254,11 @@ public class ParityUpdateUtil {
      */
     private void traversingTransactions() {
 
-        IntStream.rangeClosed(0, 40000).boxed().forEach(i -> {
+        IntStream.rangeClosed(0, 40000).parallel().boxed().forEach(i -> {
 
             List<TransactionsWithBLOBs> transactionsWithBLOBsList = transactionsService.selectByPageNum(i * 100, 100);
 
-            List<Author> authorList = transactionsWithBLOBsList.stream().map(TransactionsWithBLOBs::getAuthor).collect(Collectors.toList());
+            List<Author> authorList = transactionsWithBLOBsList.parallelStream().map(TransactionsWithBLOBs::getAuthor).collect(Collectors.toList());
 
             if (authorList.size() > 0) {
                 authorService.batchInsertSelective(authorList);
@@ -253,7 +267,7 @@ public class ParityUpdateUtil {
     }
 
     /**
-     * 更新叔块
+     * 遍历叔块
      *
      * @param start 起始区块号
      * @param end   终止区块号
@@ -271,7 +285,6 @@ public class ParityUpdateUtil {
     }
 
 
-
     /**
      * 插入叔块
      *
@@ -281,21 +294,21 @@ public class ParityUpdateUtil {
      */
     private void insertUncles(List<String> uncles, String blockHash, Long blockNumber) {
 
-        uncles.parallelStream().filter(r -> blockUncleService.selectByPrimaryKey(r) == null).forEach(u -> {
+        uncles.parallelStream().filter(r -> blockUncleService.selectByPrimaryKey(r) == null).forEach(uncle -> {
 
-            logger.info("insert uncle = " + u);
+            logger.info("insert uncle = " + uncle);
 
             try {
-                ResultGetBlock resultGetUncleBlock = ParityRequest.eth_getUncleByBlockHashAndIndex(blockHash, uncles.indexOf(u));
+                ResultGetBlock resultGetUncleBlock = ParityRequest.eth_getUncleByBlockHashAndIndex(blockHash, uncles.indexOf(uncle));
 
                 resultGetUncleBlock.getResult().ifPresent(resultBlock -> {
-                    blockUncleService.insertSelective(new BlockUncle(resultBlock, uncles.indexOf(u), blockHash, blockNumber, utils));
+                    blockUncleService.insertSelective(new BlockUncle(resultBlock, uncles.indexOf(uncle), blockHash, blockNumber, utils));
 
-                    List<BlockUncle> blockUncleList = blockUncleService.selectByUncleByHash(blockHash);
-                    if (blockUncleList != null && blockUncleList.size() > 0) {
-                        blockService.updateByPrimaryKeySelective(new Block(blockNumber,
-                                blockUncleList.stream().mapToDouble(blockUncle -> blockUncle.getSingleUncleReward(blockNumber)).sum()));
-                    }
+//                    List<BlockUncle> blockUncleList = blockUncleService.selectByUncleByHash(blockHash);
+//                    if (blockUncleList != null && blockUncleList.size() > 0) {
+//                        blockService.updateByPrimaryKeySelective(new Block(blockNumber,
+//                                blockUncleList.stream().mapToDouble(blockUncle -> blockUncle.getSingleUncleReward(blockNumber)).sum()));
+//                    }
                 });
             } catch (IOException e) {
                 logger.error("insertUncles = " + e.getMessage());
@@ -335,18 +348,6 @@ public class ParityUpdateUtil {
     }
 
     /**
-     * 插入交易地址
-     *
-     * @param address 地址
-     * @param type    类型 0：普通地址 1：合约地址
-     */
-    private void insertAuthor(String address, Integer type) {
-        if (authorService.selectByAddress(address) == null) {
-            authorService.insertSelective(new Author(address, type));
-        }
-    }
-
-    /**
      * 同步地址的交易总量
      */
     public void updateAuthor(Long maxId) {
@@ -381,9 +382,7 @@ public class ParityUpdateUtil {
         list.forEach(t -> {
             try {
                 ResultCommon eth_blockNumber = ParityRequest.eth_blockNumber();
-                if (eth_blockNumber != null) {
-                    t.setBlockConfirmationsCount(Long.valueOf(eth_blockNumber.getResult().substring(2), 16) - t.getBlocknumber());
-                }
+                eth_blockNumber.getResult().ifPresent(result -> t.setBlockConfirmationsCount(Long.valueOf(result.substring(2), 16) - t.getBlocknumber()));
             } catch (IOException e) {
                 e.printStackTrace();
             }

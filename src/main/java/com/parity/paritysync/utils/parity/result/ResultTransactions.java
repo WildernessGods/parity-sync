@@ -221,7 +221,7 @@ public class ResultTransactions {
     public TransactionsWithBLOBs getTransactionsWithBLOBs(Utils utils, String timestamp) {
         try {
             ResultGetTransactionReceipt resultGetTransactionReceipt = ParityRequest.eth_getTransactionReceipt(this.getHash());
-            return new TransactionsWithBLOBs(this, utils, resultGetTransactionReceipt.getResult(), timestamp);
+            return resultGetTransactionReceipt.getResult().map(result -> new TransactionsWithBLOBs(this, utils, result, timestamp)).orElse(null);
         } catch (IOException e) {
             e.printStackTrace();
         }
