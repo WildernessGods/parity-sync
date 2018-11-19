@@ -2,6 +2,7 @@ package com.parity.paritysync.service;
 
 import com.parity.paritysync.bean.TransactionsWithBLOBs;
 import com.parity.paritysync.dao.TransactionsMapper;
+import com.parity.paritysync.returntype.ReturnContractTransactions;
 import com.parity.paritysync.returntype.ReturnTransactions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,4 +73,7 @@ public class TransactionsService {
         return transactionsMapper.selectByAuthorOpt(author, index);
     }
 
+    public List<ReturnContractTransactions> selectByCreatest(Long index) {
+        return transactionsMapper.selectByCreatest(index);
+    }
 }

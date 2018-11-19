@@ -41,6 +41,9 @@
     <sql id="Return_Column_List">
         id, hash, status, blockNumber, timestamp, blockFrom, blockTo, creates, transactionValue, gas, gasUsed, gasPrice, fee, nonce, blockinput
     </sql>
+    <sql id="ReturnContract_Column_List">
+        id, hash, blockNumber, timestamp, blockFrom, creates, transactionValue
+    </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
         select
         <include refid="Base_Column_List"/>
@@ -452,5 +455,15 @@
     </select>
     <select id="selectByAuthorOpt_COUNT" resultType="java.lang.Long">
         select transactionsCount from author where address = #{author, jdbcType=VARCHAR}
+    </select>
+    <select id="selectByCreatest" resultType="com.parity.paritysync.returntype.ReturnContractTransactions">
+        select
+        <include refid="ReturnContract_Column_List"/>
+        from transactions
+        where id &lt;= (select id from transactions where creates != 'null' order by id desc limit #{index,jdbcType=BIGINT}, 1) and creates != 'null'
+        order by id desc
+    </select>
+    <select id="selectByCreatest_COUNT" resultType="java.lang.Integer">
+        select count from transactions_count where type = 2
     </select>
 </mapper>

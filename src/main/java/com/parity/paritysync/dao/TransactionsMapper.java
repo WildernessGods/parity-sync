@@ -1,6 +1,7 @@
 package com.parity.paritysync.dao;
 
 import com.parity.paritysync.bean.TransactionsWithBLOBs;
+import com.parity.paritysync.returntype.ReturnContractTransactions;
 import com.parity.paritysync.returntype.ReturnTransactions;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
@@ -53,4 +54,8 @@ public interface TransactionsMapper {
     List<ReturnTransactions> selectByAuthorOpt(@Param("author") String author, @Param("index") Long index);
 
     Long selectByAuthorOpt_COUNT(String author);
+
+    List<ReturnContractTransactions> selectByCreatest(Long index);
+
+    Integer selectByCreatest_COUNT();
 }

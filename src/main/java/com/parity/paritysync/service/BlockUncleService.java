@@ -2,6 +2,7 @@ package com.parity.paritysync.service;
 
 import com.parity.paritysync.bean.BlockUncle;
 import com.parity.paritysync.dao.BlockUncleMapper;
+import com.parity.paritysync.returntype.ReturnBlockUncle;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,5 +26,13 @@ public class BlockUncleService {
 
     public int insertSelective(BlockUncle blockUncle) {
         return blockUncleMapper.insertSelective(blockUncle);
+    }
+
+    public List<ReturnBlockUncle> selectAll() {
+        return blockUncleMapper.selectAll();
+    }
+
+    public int updateByPrimaryKeySelective(BlockUncle blockUncle) {
+        return blockUncleMapper.updateByPrimaryKeySelective(blockUncle);
     }
 }

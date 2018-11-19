@@ -16,12 +16,17 @@ public class ResultCommonSyncApplicationTests {
 
     @Test
     public void insertParity() {
-        parityUpdateUtil.insertParity(2770906, 4_200_000);
+        parityUpdateUtil.insertParity(2779639, 4_200_000);
     }
 
     @Test
     public void updateParity() {
         parityUpdateUtil.updateParity(0, 2447761);
+    }
+
+    @Test
+    public void updateUncles() {
+        parityUpdateUtil.traversingUncles(10000, 500000);
     }
 
     @Test

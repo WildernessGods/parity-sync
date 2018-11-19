@@ -1,6 +1,7 @@
 package com.parity.paritysync.bean;
 
 import com.parity.paritysync.utils.Utils;
+import com.parity.paritysync.utils.parity.result.ResultBlock;
 import com.parity.paritysync.utils.parity.result.ResultGetBlock;
 
 import java.text.SimpleDateFormat;
@@ -13,6 +14,8 @@ public class BlockUncle {
     private Long number;
 
     private String parenthash;
+
+    private Integer position;
 
     private String nonce;
 
@@ -32,9 +35,9 @@ public class BlockUncle {
 
     private String miner;
 
-    private Double difficulty;
+    private String difficulty;
 
-    private Double totaldifficulty;
+    private String totaldifficulty;
 
     private String extradata;
 
@@ -46,39 +49,46 @@ public class BlockUncle {
 
     private String timestamp;
 
+    private Long unclebynumber;
+
     private String unclebyhash;
+
+    private Double unclereward;
 
     public BlockUncle() {
     }
 
-    public BlockUncle(ResultGetBlock resultGetUncleBlock, String hash, Utils utils) {
+    public BlockUncle(ResultBlock resultBlock, Integer position, String blockHash, Long blockNumber, Utils utils) {
 
-        this.number = Long.valueOf(resultGetUncleBlock.getResult().getNumber().substring(2), 16);
-        this.hash = resultGetUncleBlock.getResult().getHash();
-        this.parenthash = resultGetUncleBlock.getResult().getParentHash();
-        this.nonce = resultGetUncleBlock.getResult().getNonce();
-        this.mixhash = resultGetUncleBlock.getResult().getMixHash();
-        this.sha3uncles = resultGetUncleBlock.getResult().getSha3Uncles();
-        this.logsbloom = resultGetUncleBlock.getResult().getLogsBloom();
-        this.transactionsroot = resultGetUncleBlock.getResult().getTransactionsRoot();
-        this.stateroot = resultGetUncleBlock.getResult().getStateRoot();
-        this.receiptsroot = resultGetUncleBlock.getResult().getReceiptsRoot();
-        this.author = resultGetUncleBlock.getResult().getAuthor();
-        this.miner = resultGetUncleBlock.getResult().getMiner();
-        this.difficulty = utils.toDouble(resultGetUncleBlock.getResult().getDifficulty());
-        this.totaldifficulty = utils.toDouble(resultGetUncleBlock.getResult().getTotalDifficulty());
-        this.extradata = resultGetUncleBlock.getResult().getExtraData();
-        this.size = resultGetUncleBlock.getResult().getSize() != null ?
-                Integer.valueOf(resultGetUncleBlock.getResult().getSize().substring(2), 16) : 0;
-        this.gaslimit = Long.valueOf(resultGetUncleBlock.getResult().getGasLimit().substring(2), 16);
-        this.gasused = Long.valueOf(resultGetUncleBlock.getResult().getGasUsed().substring(2), 16);
+        this.number = Long.valueOf(resultBlock.getNumber().substring(2), 16);
+        this.hash = resultBlock.getHash();
+        this.parenthash = resultBlock.getParentHash();
+        this.position = position;
+        this.nonce = resultBlock.getNonce();
+        this.mixhash = resultBlock.getMixHash();
+        this.sha3uncles = resultBlock.getSha3Uncles();
+        this.logsbloom = resultBlock.getLogsBloom();
+        this.transactionsroot = resultBlock.getTransactionsRoot();
+        this.stateroot = resultBlock.getStateRoot();
+        this.receiptsroot = resultBlock.getReceiptsRoot();
+        this.author = resultBlock.getAuthor();
+        this.miner = resultBlock.getMiner();
+        this.difficulty = utils.toString(resultBlock.getDifficulty());
+        this.totaldifficulty = utils.toString(resultBlock.getTotalDifficulty());
+        this.extradata = resultBlock.getExtraData();
+        this.size = resultBlock.getSize() != null ?
+                Integer.valueOf(resultBlock.getSize().substring(2), 16) : 0;
+        this.gaslimit = Long.valueOf(resultBlock.getGasLimit().substring(2), 16);
+        this.gasused = Long.valueOf(resultBlock.getGasUsed().substring(2), 16);
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT+0"));
-        long ltimestamp = Long.valueOf(resultGetUncleBlock.getResult().getTimestamp().substring(2), 16) * 1000L;
+        long ltimestamp = Long.valueOf(resultBlock.getTimestamp().substring(2), 16) * 1000L;
         Date date = new Date(ltimestamp);
         this.timestamp = simpleDateFormat.format(date);
-        this.unclebyhash = hash;
+        this.unclebynumber = blockNumber;
+        this.unclebyhash = blockHash;
+        this.unclereward = getSingleUncleReward(blockNumber);
     }
 
     public String getHash() {
@@ -103,6 +113,14 @@ public class BlockUncle {
 
     public void setParenthash(String parenthash) {
         this.parenthash = parenthash == null ? null : parenthash.trim();
+    }
+
+    public Integer getPosition() {
+        return position;
+    }
+
+    public void setPosition(Integer position) {
+        this.position = position;
     }
 
     public String getNonce() {
@@ -177,20 +195,20 @@ public class BlockUncle {
         this.miner = miner == null ? null : miner.trim();
     }
 
-    public Double getDifficulty() {
+    public String getDifficulty() {
         return difficulty;
     }
 
-    public void setDifficulty(Double difficulty) {
-        this.difficulty = difficulty;
+    public void setDifficulty(String difficulty) {
+        this.difficulty = difficulty == null ? null : difficulty.trim();
     }
 
-    public Double getTotaldifficulty() {
+    public String getTotaldifficulty() {
         return totaldifficulty;
     }
 
-    public void setTotaldifficulty(Double totaldifficulty) {
-        this.totaldifficulty = totaldifficulty;
+    public void setTotaldifficulty(String totaldifficulty) {
+        this.totaldifficulty = totaldifficulty == null ? null : totaldifficulty.trim();
     }
 
     public String getExtradata() {
@@ -233,12 +251,28 @@ public class BlockUncle {
         this.timestamp = timestamp;
     }
 
+    public Long getUnclebynumber() {
+        return unclebynumber;
+    }
+
+    public void setUnclebynumber(Long unclebynumber) {
+        this.unclebynumber = unclebynumber;
+    }
+
     public String getUnclebyhash() {
         return unclebyhash;
     }
 
     public void setUnclebyhash(String unclebyhash) {
         this.unclebyhash = unclebyhash == null ? null : unclebyhash.trim();
+    }
+
+    public Double getUnclereward() {
+        return unclereward;
+    }
+
+    public void setUnclereward(Double unclereward) {
+        this.unclereward = unclereward;
     }
 
     public Double getSingleUncleReward(Long blockNumber) {

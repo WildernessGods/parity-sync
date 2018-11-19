@@ -2,6 +2,7 @@ package com.parity.paritysync.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.parity.paritysync.returntype.ReturnContractTransactions;
 import com.parity.paritysync.returntype.ReturnTransactions;
 import com.parity.paritysync.service.TransactionsService;
 import com.parity.paritysync.utils.ParityLog;
@@ -11,9 +12,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import static com.parity.paritysync.utils.ReturnMessage.OPERATE_SUCCESS;
+import static java.util.stream.Collectors.toList;
 
 @RestController
 public class TransactionsController {
@@ -22,7 +28,7 @@ public class TransactionsController {
 
     private final ParityUpdateUtil parityUpdateUtil;
 
-    public TransactionsController(TransactionsService transactionsService,ParityUpdateUtil parityUpdateUtil) {
+    public TransactionsController(TransactionsService transactionsService, ParityUpdateUtil parityUpdateUtil) {
         this.transactionsService = transactionsService;
         this.parityUpdateUtil = parityUpdateUtil;
     }
@@ -123,5 +129,20 @@ public class TransactionsController {
         PageInfo<ReturnTransactions> pageInfo = new PageInfo<>(returnTransactionsList);
 
         return ReturnMessage.success(OPERATE_SUCCESS).add("transactions", pageInfo);
+    }
+
+    @ParityLog("分页查询合约内部交易")
+    @GetMapping("/transactions/contract")
+    public ReturnMessage readByContract(@RequestParam("pageNum") Long pageNum) {
+
+        PageHelper.startPage(0, 50);
+        List<ReturnContractTransactions> returnTransactionsList = transactionsService.selectByCreatest(pageNum * 50);
+        PageInfo<ReturnContractTransactions> pageInfo = new PageInfo<>(returnTransactionsList);
+
+        Map<Long, List<ReturnContractTransactions>> returnTransactionsMapList =
+                pageInfo.getList().stream().collect(Collectors.groupingBy(ReturnContractTransactions::getBlocknumber,
+                        () -> new TreeMap<>(Comparator.reverseOrder()), toList()));
+
+        return ReturnMessage.success(OPERATE_SUCCESS).add("transactions", returnTransactionsMapList).add("pages", pageInfo.getPages());
     }
 }

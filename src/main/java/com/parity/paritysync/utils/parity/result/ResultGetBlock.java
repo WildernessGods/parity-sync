@@ -1,5 +1,7 @@
 package com.parity.paritysync.utils.parity.result;
 
+import java.util.Optional;
+
 public class ResultGetBlock {
 
     private Integer id;
@@ -24,12 +26,11 @@ public class ResultGetBlock {
         this.jsonrpc = jsonrpc;
     }
 
-    public ResultBlock getResult() {
-        return result;
+    public Optional<ResultBlock> getResult() {
+        return Optional.of(result);
     }
 
     public void setResult(ResultBlock result) {
         this.result = result;
     }
-
 }

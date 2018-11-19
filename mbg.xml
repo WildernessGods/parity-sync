@@ -39,8 +39,8 @@
 
         <!--table指定每隔表的生成策略-->
         <!--<table tableName="author" domainObjectName="Author"/>-->
-        <table tableName="block" domainObjectName="Block"/>
-        <!--<table tableName="block_uncle" domainObjectName="BlockUncle"/>-->
+        <!--<table tableName="block" domainObjectName="Block"/>-->
+        <table tableName="block_uncle" domainObjectName="BlockUncle"/>
         <!--<table tableName="receipt_logs" domainObjectName="ReceiptLogs"/>-->
         <!--<table tableName="transactions" domainObjectName="Transactions"/>-->
         <!--<table tableName="transaction_receipt" domainObjectName="TransactionReceipt"/>-->

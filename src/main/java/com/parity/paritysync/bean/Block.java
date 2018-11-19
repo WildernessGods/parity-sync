@@ -1,7 +1,7 @@
 package com.parity.paritysync.bean;
 
 import com.parity.paritysync.utils.Utils;
-import com.parity.paritysync.utils.parity.result.ResultGetBlock;
+import com.parity.paritysync.utils.parity.result.ResultBlock;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -81,34 +81,34 @@ public class Block {
         this.unclesreward = unclesReward;
     }
 
-    public Block(ResultGetBlock resultGetBlock, Utils utils) {
-        this.number = Long.valueOf(resultGetBlock.getResult().getNumber().substring(2), 16);
-        this.hash = resultGetBlock.getResult().getHash();
-        this.parenthash = resultGetBlock.getResult().getParentHash();
-        this.nonce = resultGetBlock.getResult().getNonce();
-        this.mixhash = resultGetBlock.getResult().getMixHash();
-        this.sha3uncles = resultGetBlock.getResult().getSha3Uncles();
-        this.logsbloom = resultGetBlock.getResult().getLogsBloom();
-        this.transactionsroot = resultGetBlock.getResult().getTransactionsRoot();
-        this.stateroot = resultGetBlock.getResult().getStateRoot();
-        this.receiptsroot = resultGetBlock.getResult().getReceiptsRoot();
-        this.author = resultGetBlock.getResult().getAuthor();
-        this.miner = resultGetBlock.getResult().getMiner();
-        this.difficulty = utils.toString(resultGetBlock.getResult().getDifficulty());
-        this.totaldifficulty = utils.toString(resultGetBlock.getResult().getTotalDifficulty());
-        this.extradata = resultGetBlock.getResult().getExtraData();
-        this.size = Integer.valueOf(resultGetBlock.getResult().getSize().substring(2), 16);
-        this.gaslimit = Long.valueOf(resultGetBlock.getResult().getGasLimit().substring(2), 16);
-        this.gasused = Long.valueOf(resultGetBlock.getResult().getGasUsed().substring(2), 16);
+    public Block(ResultBlock resultBlock, Utils utils) {
+        this.number = Long.valueOf(resultBlock.getNumber().substring(2), 16);
+        this.hash = resultBlock.getHash();
+        this.parenthash = resultBlock.getParentHash();
+        this.nonce = resultBlock.getNonce();
+        this.mixhash = resultBlock.getMixHash();
+        this.sha3uncles = resultBlock.getSha3Uncles();
+        this.logsbloom = resultBlock.getLogsBloom();
+        this.transactionsroot = resultBlock.getTransactionsRoot();
+        this.stateroot = resultBlock.getStateRoot();
+        this.receiptsroot = resultBlock.getReceiptsRoot();
+        this.author = resultBlock.getAuthor();
+        this.miner = resultBlock.getMiner();
+        this.difficulty = utils.toString(resultBlock.getDifficulty());
+        this.totaldifficulty = utils.toString(resultBlock.getTotalDifficulty());
+        this.extradata = resultBlock.getExtraData();
+        this.size = Integer.valueOf(resultBlock.getSize().substring(2), 16);
+        this.gaslimit = Long.valueOf(resultBlock.getGasLimit().substring(2), 16);
+        this.gasused = Long.valueOf(resultBlock.getGasUsed().substring(2), 16);
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT+0"));
-        long ltimestamp = Long.valueOf(resultGetBlock.getResult().getTimestamp().substring(2), 16) * 1000L;
+        long ltimestamp = Long.valueOf(resultBlock.getTimestamp().substring(2), 16) * 1000L;
         Date date = new Date(ltimestamp);
         this.timestamp = simpleDateFormat.format(date);
 
-        this.totaltransactionscount = resultGetBlock.getResult().getTransactions().size();
-        this.unclecount = resultGetBlock.getResult().getUncles().size();
+        this.totaltransactionscount = resultBlock.getTransactions().size();
+        this.unclecount = resultBlock.getUncles().size();
     }
 
     public Long getNumber() {
