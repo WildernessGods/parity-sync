@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.parity.paritysync.dao.BlockUncleMapper">
+    <resultMap id="BaseResultMap" type="com.parity.paritysync.bean.BlockUncle">
+        <id column="hash" jdbcType="VARCHAR" property="hash"/>
+        <result column="number" jdbcType="BIGINT" property="number"/>
+        <result column="parentHash" jdbcType="VARCHAR" property="parenthash"/>
+        <result column="nonce" jdbcType="VARCHAR" property="nonce"/>
+        <result column="mixHash" jdbcType="VARCHAR" property="mixhash"/>
+        <result column="sha3Uncles" jdbcType="VARCHAR" property="sha3uncles"/>
+        <result column="logsBloom" jdbcType="VARCHAR" property="logsbloom"/>
+        <result column="transactionsRoot" jdbcType="VARCHAR" property="transactionsroot"/>
+        <result column="stateRoot" jdbcType="VARCHAR" property="stateroot"/>
+        <result column="receiptsRoot" jdbcType="VARCHAR" property="receiptsroot"/>
+        <result column="author" jdbcType="VARCHAR" property="author"/>
+        <result column="miner" jdbcType="VARCHAR" property="miner"/>
+        <result column="difficulty" jdbcType="DOUBLE" property="difficulty"/>
+        <result column="totalDifficulty" jdbcType="DOUBLE" property="totaldifficulty"/>
+        <result column="extraData" jdbcType="VARCHAR" property="extradata"/>
+        <result column="size" jdbcType="INTEGER" property="size"/>
+        <result column="gasLimit" jdbcType="BIGINT" property="gaslimit"/>
+        <result column="gasUsed" jdbcType="BIGINT" property="gasused"/>
+        <result column="timestamp" jdbcType="VARCHAR" property="timestamp"/>
+        <result column="uncleByHash" jdbcType="VARCHAR" property="unclebyhash"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+        hash, number, parentHash, nonce, mixHash, sha3Uncles, logsBloom, transactionsRoot,
+        stateRoot, receiptsRoot, author, miner, difficulty, totalDifficulty, extraData, size,
+        gasLimit, gasUsed, timestamp, uncleByHash
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from block_uncle
+        where hash = #{hash,jdbcType=VARCHAR}
+    </select>
+    <select id="selectByUncleByHash" resultType="com.parity.paritysync.bean.BlockUncle">
+        select
+        <include refid="Base_Column_List"/>
+        from block_uncle
+        where uncleByHash = #{uncleByHash,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from block_uncle
+    where hash = #{hash,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.parity.paritysync.bean.BlockUncle">
+    insert into block_uncle (hash, number, parentHash, 
+      nonce, mixHash, sha3Uncles, 
+      logsBloom, transactionsRoot, stateRoot, 
+      receiptsRoot, author, miner, 
+      difficulty, totalDifficulty, extraData, 
+      size, gasLimit, gasUsed, 
+      timestamp, uncleByHash)
+    values (#{hash,jdbcType=VARCHAR}, #{number,jdbcType=BIGINT}, #{parenthash,jdbcType=VARCHAR}, 
+      #{nonce,jdbcType=VARCHAR}, #{mixhash,jdbcType=VARCHAR}, #{sha3uncles,jdbcType=VARCHAR}, 
+      #{logsbloom,jdbcType=VARCHAR}, #{transactionsroot,jdbcType=VARCHAR}, #{stateroot,jdbcType=VARCHAR}, 
+      #{receiptsroot,jdbcType=VARCHAR}, #{author,jdbcType=VARCHAR}, #{miner,jdbcType=VARCHAR}, 
+      #{difficulty,jdbcType=DOUBLE}, #{totaldifficulty,jdbcType=DOUBLE}, #{extradata,jdbcType=VARCHAR}, 
+      #{size,jdbcType=INTEGER}, #{gaslimit,jdbcType=BIGINT}, #{gasused,jdbcType=BIGINT}, 
+      #{timestamp,jdbcType=VARCHAR}, #{unclebyhash,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.parity.paritysync.bean.BlockUncle">
+        insert into block_uncle
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="hash != null">
+                hash,
+            </if>
+            <if test="number != null">
+                number,
+            </if>
+            <if test="parenthash != null">
+                parentHash,
+            </if>
+            <if test="nonce != null">
+                nonce,
+            </if>
+            <if test="mixhash != null">
+                mixHash,
+            </if>
+            <if test="sha3uncles != null">
+                sha3Uncles,
+            </if>
+            <if test="logsbloom != null">
+                logsBloom,
+            </if>
+            <if test="transactionsroot != null">
+                transactionsRoot,
+            </if>
+            <if test="stateroot != null">
+                stateRoot,
+            </if>
+            <if test="receiptsroot != null">
+                receiptsRoot,
+            </if>
+            <if test="author != null">
+                author,
+            </if>
+            <if test="miner != null">
+                miner,
+            </if>
+            <if test="difficulty != null">
+                difficulty,
+            </if>
+            <if test="totaldifficulty != null">
+                totalDifficulty,
+            </if>
+            <if test="extradata != null">
+                extraData,
+            </if>
+            <if test="size != null">
+                size,
+            </if>
+            <if test="gaslimit != null">
+                gasLimit,
+            </if>
+            <if test="gasused != null">
+                gasUsed,
+            </if>
+            <if test="timestamp != null">
+                timestamp,
+            </if>
+            <if test="unclebyhash != null">
+                uncleByHash,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="hash != null">
+                #{hash,jdbcType=VARCHAR},
+            </if>
+            <if test="number != null">
+                #{number,jdbcType=BIGINT},
+            </if>
+            <if test="parenthash != null">
+                #{parenthash,jdbcType=VARCHAR},
+            </if>
+            <if test="nonce != null">
+                #{nonce,jdbcType=VARCHAR},
+            </if>
+            <if test="mixhash != null">
+                #{mixhash,jdbcType=VARCHAR},
+            </if>
+            <if test="sha3uncles != null">
+                #{sha3uncles,jdbcType=VARCHAR},
+            </if>
+            <if test="logsbloom != null">
+                #{logsbloom,jdbcType=VARCHAR},
+            </if>
+            <if test="transactionsroot != null">
+                #{transactionsroot,jdbcType=VARCHAR},
+            </if>
+            <if test="stateroot != null">
+                #{stateroot,jdbcType=VARCHAR},
+            </if>
+            <if test="receiptsroot != null">
+                #{receiptsroot,jdbcType=VARCHAR},
+            </if>
+            <if test="author != null">
+                #{author,jdbcType=VARCHAR},
+            </if>
+            <if test="miner != null">
+                #{miner,jdbcType=VARCHAR},
+            </if>
+            <if test="difficulty != null">
+                #{difficulty,jdbcType=DOUBLE},
+            </if>
+            <if test="totaldifficulty != null">
+                #{totaldifficulty,jdbcType=DOUBLE},
+            </if>
+            <if test="extradata != null">
+                #{extradata,jdbcType=VARCHAR},
+            </if>
+            <if test="size != null">
+                #{size,jdbcType=INTEGER},
+            </if>
+            <if test="gaslimit != null">
+                #{gaslimit,jdbcType=BIGINT},
+            </if>
+            <if test="gasused != null">
+                #{gasused,jdbcType=BIGINT},
+            </if>
+            <if test="timestamp != null">
+                #{timestamp,jdbcType=VARCHAR},
+            </if>
+            <if test="unclebyhash != null">
+                #{unclebyhash,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.parity.paritysync.bean.BlockUncle">
+        update block_uncle
+        <set>
+            <if test="number != null">
+                number = #{number,jdbcType=BIGINT},
+            </if>
+            <if test="parenthash != null">
+                parentHash = #{parenthash,jdbcType=VARCHAR},
+            </if>
+            <if test="nonce != null">
+                nonce = #{nonce,jdbcType=VARCHAR},
+            </if>
+            <if test="mixhash != null">
+                mixHash = #{mixhash,jdbcType=VARCHAR},
+            </if>
+            <if test="sha3uncles != null">
+                sha3Uncles = #{sha3uncles,jdbcType=VARCHAR},
+            </if>
+            <if test="logsbloom != null">
+                logsBloom = #{logsbloom,jdbcType=VARCHAR},
+            </if>
+            <if test="transactionsroot != null">
+                transactionsRoot = #{transactionsroot,jdbcType=VARCHAR},
+            </if>
+            <if test="stateroot != null">
+                stateRoot = #{stateroot,jdbcType=VARCHAR},
+            </if>
+            <if test="receiptsroot != null">
+                receiptsRoot = #{receiptsroot,jdbcType=VARCHAR},
+            </if>
+            <if test="author != null">
+                author = #{author,jdbcType=VARCHAR},
+            </if>
+            <if test="miner != null">
+                miner = #{miner,jdbcType=VARCHAR},
+            </if>
+            <if test="difficulty != null">
+                difficulty = #{difficulty,jdbcType=DOUBLE},
+            </if>
+            <if test="totaldifficulty != null">
+                totalDifficulty = #{totaldifficulty,jdbcType=DOUBLE},
+            </if>
+            <if test="extradata != null">
+                extraData = #{extradata,jdbcType=VARCHAR},
+            </if>
+            <if test="size != null">
+                size = #{size,jdbcType=INTEGER},
+            </if>
+            <if test="gaslimit != null">
+                gasLimit = #{gaslimit,jdbcType=BIGINT},
+            </if>
+            <if test="gasused != null">
+                gasUsed = #{gasused,jdbcType=BIGINT},
+            </if>
+            <if test="timestamp != null">
+                timestamp = #{timestamp,jdbcType=VARCHAR},
+            </if>
+            <if test="unclebyhash != null">
+                uncleByHash = #{unclebyhash,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where hash = #{hash,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.parity.paritysync.bean.BlockUncle">
+    update block_uncle
+    set number = #{number,jdbcType=BIGINT},
+      parentHash = #{parenthash,jdbcType=VARCHAR},
+      nonce = #{nonce,jdbcType=VARCHAR},
+      mixHash = #{mixhash,jdbcType=VARCHAR},
+      sha3Uncles = #{sha3uncles,jdbcType=VARCHAR},
+      logsBloom = #{logsbloom,jdbcType=VARCHAR},
+      transactionsRoot = #{transactionsroot,jdbcType=VARCHAR},
+      stateRoot = #{stateroot,jdbcType=VARCHAR},
+      receiptsRoot = #{receiptsroot,jdbcType=VARCHAR},
+      author = #{author,jdbcType=VARCHAR},
+      miner = #{miner,jdbcType=VARCHAR},
+      difficulty = #{difficulty,jdbcType=DOUBLE},
+      totalDifficulty = #{totaldifficulty,jdbcType=DOUBLE},
+      extraData = #{extradata,jdbcType=VARCHAR},
+      size = #{size,jdbcType=INTEGER},
+      gasLimit = #{gaslimit,jdbcType=BIGINT},
+      gasUsed = #{gasused,jdbcType=BIGINT},
+      timestamp = #{timestamp,jdbcType=VARCHAR},
+      uncleByHash = #{unclebyhash,jdbcType=VARCHAR}
+    where hash = #{hash,jdbcType=VARCHAR}
+  </update>
+</mapper>

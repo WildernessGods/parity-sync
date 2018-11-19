@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.parity.paritysync.dao.TransactionReceiptMapper">
+    <resultMap id="BaseResultMap" type="com.parity.paritysync.bean.TransactionReceipt">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="blockNumber" jdbcType="BIGINT" property="blocknumber"/>
+        <result column="blockHash" jdbcType="VARCHAR" property="blockhash"/>
+        <result column="transactionHash" jdbcType="VARCHAR" property="transactionhash"/>
+        <result column="transactionIndex" jdbcType="INTEGER" property="transactionindex"/>
+        <result column="contractAddress" jdbcType="VARCHAR" property="contractaddress"/>
+        <result column="cumulativeGasUsed" jdbcType="VARCHAR" property="cumulativegasused"/>
+        <result column="blockFrom" jdbcType="VARCHAR" property="blockfrom"/>
+        <result column="gasUsed" jdbcType="VARCHAR" property="gasused"/>
+        <result column="root" jdbcType="VARCHAR" property="root"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="logsBloom" jdbcType="VARCHAR" property="logsbloom"/>
+        <result column="blockTo" jdbcType="VARCHAR" property="blockto"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+        id, blockNumber, blockHash, transactionHash, transactionIndex, contractAddress, cumulativeGasUsed,
+        blockFrom, gasUsed, root, status, logsBloom, blockTo
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from transaction_receipt
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="selectByTransactionHash" resultType="com.parity.paritysync.bean.TransactionReceipt">
+        select
+        <include refid="Base_Column_List"/>
+        from transaction_receipt
+        where transactionHash = #{transactionhash,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from transaction_receipt
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.parity.paritysync.bean.TransactionReceipt">
+    insert into transaction_receipt (id, blockNumber, blockHash, 
+      transactionHash, transactionIndex, contractAddress, 
+      cumulativeGasUsed, blockFrom, gasUsed, 
+      root, status, logsBloom, 
+      blockTo)
+    values (#{id,jdbcType=BIGINT}, #{blocknumber,jdbcType=BIGINT}, #{blockhash,jdbcType=VARCHAR}, 
+      #{transactionhash,jdbcType=VARCHAR}, #{transactionindex,jdbcType=INTEGER}, #{contractaddress,jdbcType=VARCHAR}, 
+      #{cumulativegasused,jdbcType=VARCHAR}, #{blockfrom,jdbcType=VARCHAR}, #{gasused,jdbcType=VARCHAR}, 
+      #{root,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{logsbloom,jdbcType=VARCHAR}, 
+      #{blockto,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.parity.paritysync.bean.TransactionReceipt">
+        insert into transaction_receipt
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="blocknumber != null">
+                blockNumber,
+            </if>
+            <if test="blockhash != null">
+                blockHash,
+            </if>
+            <if test="transactionhash != null">
+                transactionHash,
+            </if>
+            <if test="transactionindex != null">
+                transactionIndex,
+            </if>
+            <if test="contractaddress != null">
+                contractAddress,
+            </if>
+            <if test="cumulativegasused != null">
+                cumulativeGasUsed,
+            </if>
+            <if test="blockfrom != null">
+                blockFrom,
+            </if>
+            <if test="gasused != null">
+                gasUsed,
+            </if>
+            <if test="root != null">
+                root,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="logsbloom != null">
+                logsBloom,
+            </if>
+            <if test="blockto != null">
+                blockTo,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="blocknumber != null">
+                #{blocknumber,jdbcType=BIGINT},
+            </if>
+            <if test="blockhash != null">
+                #{blockhash,jdbcType=VARCHAR},
+            </if>
+            <if test="transactionhash != null">
+                #{transactionhash,jdbcType=VARCHAR},
+            </if>
+            <if test="transactionindex != null">
+                #{transactionindex,jdbcType=INTEGER},
+            </if>
+            <if test="contractaddress != null">
+                #{contractaddress,jdbcType=VARCHAR},
+            </if>
+            <if test="cumulativegasused != null">
+                #{cumulativegasused,jdbcType=VARCHAR},
+            </if>
+            <if test="blockfrom != null">
+                #{blockfrom,jdbcType=VARCHAR},
+            </if>
+            <if test="gasused != null">
+                #{gasused,jdbcType=VARCHAR},
+            </if>
+            <if test="root != null">
+                #{root,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="logsbloom != null">
+                #{logsbloom,jdbcType=VARCHAR},
+            </if>
+            <if test="blockto != null">
+                #{blockto,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.parity.paritysync.bean.TransactionReceipt">
+        update transaction_receipt
+        <set>
+            <if test="blocknumber != null">
+                blockNumber = #{blocknumber,jdbcType=BIGINT},
+            </if>
+            <if test="blockhash != null">
+                blockHash = #{blockhash,jdbcType=VARCHAR},
+            </if>
+            <if test="transactionhash != null">
+                transactionHash = #{transactionhash,jdbcType=VARCHAR},
+            </if>
+            <if test="transactionindex != null">
+                transactionIndex = #{transactionindex,jdbcType=INTEGER},
+            </if>
+            <if test="contractaddress != null">
+                contractAddress = #{contractaddress,jdbcType=VARCHAR},
+            </if>
+            <if test="cumulativegasused != null">
+                cumulativeGasUsed = #{cumulativegasused,jdbcType=VARCHAR},
+            </if>
+            <if test="blockfrom != null">
+                blockFrom = #{blockfrom,jdbcType=VARCHAR},
+            </if>
+            <if test="gasused != null">
+                gasUsed = #{gasused,jdbcType=VARCHAR},
+            </if>
+            <if test="root != null">
+                root = #{root,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="logsbloom != null">
+                logsBloom = #{logsbloom,jdbcType=VARCHAR},
+            </if>
+            <if test="blockto != null">
+                blockTo = #{blockto,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.parity.paritysync.bean.TransactionReceipt">
+    update transaction_receipt
+    set blockNumber = #{blocknumber,jdbcType=BIGINT},
+      blockHash = #{blockhash,jdbcType=VARCHAR},
+      transactionHash = #{transactionhash,jdbcType=VARCHAR},
+      transactionIndex = #{transactionindex,jdbcType=INTEGER},
+      contractAddress = #{contractaddress,jdbcType=VARCHAR},
+      cumulativeGasUsed = #{cumulativegasused,jdbcType=VARCHAR},
+      blockFrom = #{blockfrom,jdbcType=VARCHAR},
+      gasUsed = #{gasused,jdbcType=VARCHAR},
+      root = #{root,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      logsBloom = #{logsbloom,jdbcType=VARCHAR},
+      blockTo = #{blockto,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <insert id="batchInsert">
+        insert into transaction_receipt (blockNumber, blockHash, transactionHash, transactionIndex, contractAddress, cumulativeGasUsed,
+        blockFrom, gasUsed, root, status, logsBloom, blockTo )
+        VALUES
+        <foreach collection="list" index="index" item="item" separator=",">
+            (#{item.blocknumber,jdbcType=BIGINT}, #{item.blockhash,jdbcType=VARCHAR}, #{item.transactionhash,jdbcType=VARCHAR},
+            #{item.transactionindex,jdbcType=INTEGER}, #{item.contractaddress,jdbcType=VARCHAR}, #{item.cumulativegasused,jdbcType=VARCHAR},
+            #{item.blockfrom,jdbcType=VARCHAR}, #{item.gasused,jdbcType=VARCHAR}, #{item.root,jdbcType=VARCHAR},
+            #{item.status,jdbcType=VARCHAR}, #{item.logsbloom,jdbcType=VARCHAR}, #{item.blockto,jdbcType=VARCHAR} )
+        </foreach>
+    </insert>
+</mapper>

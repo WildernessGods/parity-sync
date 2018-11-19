@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.parity.paritysync.dao.ReceiptLogsMapper">
+    <resultMap id="BaseResultMap" type="com.parity.paritysync.bean.ReceiptLogs">
+        <result column="blockNumber" jdbcType="BIGINT" property="blocknumber"/>
+        <result column="blockHash" jdbcType="VARCHAR" property="blockhash"/>
+        <result column="transactionHash" jdbcType="VARCHAR" property="transactionhash"/>
+        <result column="transactionIndex" jdbcType="INTEGER" property="transactionindex"/>
+        <result column="transactionLogIndex" jdbcType="INTEGER" property="transactionlogindex"/>
+        <result column="address" jdbcType="VARCHAR" property="address"/>
+        <result column="data" jdbcType="VARCHAR" property="data"/>
+        <result column="logIndex" jdbcType="INTEGER" property="logindex"/>
+        <result column="removed" jdbcType="BIT" property="removed"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        blockNumber, blockHash, transactionHash, transactionIndex, transactionLogIndex,
+        address, data, logIndex, removed, type
+    </sql>
+    <insert id="insert" parameterType="com.parity.paritysync.bean.ReceiptLogs">
+    insert into receipt_logs (id, blockNumber, blockHash, 
+      transactionHash, transactionIndex, transactionLogIndex, 
+      address, data, logIndex, 
+      removed, type)
+    values (#{id,jdbcType=BIGINT}, #{blocknumber,jdbcType=BIGINT}, #{blockhash,jdbcType=VARCHAR}, 
+      #{transactionhash,jdbcType=VARCHAR}, #{transactionindex,jdbcType=INTEGER}, #{transactionlogindex,jdbcType=INTEGER}, 
+      #{address,jdbcType=VARCHAR}, #{data,jdbcType=VARCHAR}, #{logindex,jdbcType=INTEGER}, 
+      #{removed,jdbcType=BIT}, #{type,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.parity.paritysync.bean.ReceiptLogs">
+        insert into receipt_logs
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="blocknumber != null">
+                blockNumber,
+            </if>
+            <if test="blockhash != null">
+                blockHash,
+            </if>
+            <if test="transactionhash != null">
+                transactionHash,
+            </if>
+            <if test="transactionindex != null">
+                transactionIndex,
+            </if>
+            <if test="transactionlogindex != null">
+                transactionLogIndex,
+            </if>
+            <if test="address != null">
+                address,
+            </if>
+            <if test="data != null">
+                data,
+            </if>
+            <if test="logindex != null">
+                logIndex,
+            </if>
+            <if test="removed != null">
+                removed,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="blocknumber != null">
+                #{blocknumber,jdbcType=BIGINT},
+            </if>
+            <if test="blockhash != null">
+                #{blockhash,jdbcType=VARCHAR},
+            </if>
+            <if test="transactionhash != null">
+                #{transactionhash,jdbcType=VARCHAR},
+            </if>
+            <if test="transactionindex != null">
+                #{transactionindex,jdbcType=INTEGER},
+            </if>
+            <if test="transactionlogindex != null">
+                #{transactionlogindex,jdbcType=INTEGER},
+            </if>
+            <if test="address != null">
+                #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="data != null">
+                #{data,jdbcType=VARCHAR},
+            </if>
+            <if test="logindex != null">
+                #{logindex,jdbcType=INTEGER},
+            </if>
+            <if test="removed != null">
+                #{removed,jdbcType=BIT},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.parity.paritysync.bean.ReceiptLogs">
+        update receipt_logs
+        <set>
+            <if test="blocknumber != null">
+                blockNumber = #{blocknumber,jdbcType=BIGINT},
+            </if>
+            <if test="blockhash != null">
+                blockHash = #{blockhash,jdbcType=VARCHAR},
+            </if>
+            <if test="transactionhash != null">
+                transactionHash = #{transactionhash,jdbcType=VARCHAR},
+            </if>
+            <if test="transactionindex != null">
+                transactionIndex = #{transactionindex,jdbcType=INTEGER},
+            </if>
+            <if test="transactionlogindex != null">
+                transactionLogIndex = #{transactionlogindex,jdbcType=INTEGER},
+            </if>
+            <if test="address != null">
+                address = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="data != null">
+                data = #{data,jdbcType=VARCHAR},
+            </if>
+            <if test="logindex != null">
+                logIndex = #{logindex,jdbcType=INTEGER},
+            </if>
+            <if test="removed != null">
+                removed = #{removed,jdbcType=BIT},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.parity.paritysync.bean.ReceiptLogs">
+    update receipt_logs
+    set blockNumber = #{blocknumber,jdbcType=BIGINT},
+      blockHash = #{blockhash,jdbcType=VARCHAR},
+      transactionHash = #{transactionhash,jdbcType=VARCHAR},
+      transactionIndex = #{transactionindex,jdbcType=INTEGER},
+      transactionLogIndex = #{transactionlogindex,jdbcType=INTEGER},
+      address = #{address,jdbcType=VARCHAR},
+      data = #{data,jdbcType=VARCHAR},
+      logIndex = #{logindex,jdbcType=INTEGER},
+      removed = #{removed,jdbcType=BIT},
+      type = #{type,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <insert id="batchInsert">
+        insert into receipt_logs (blockNumber, blockHash, transactionHash, transactionIndex, transactionLogIndex,
+        address, data, logIndex, removed, type)
+        VALUES
+        <foreach collection="list" index="index" item="item" separator=",">
+            (#{item.blocknumber,jdbcType=BIGINT}, #{item.blockhash,jdbcType=VARCHAR}, #{item.transactionhash,jdbcType=VARCHAR},
+            #{item.transactionindex,jdbcType=INTEGER}, #{item.transactionlogindex,jdbcType=INTEGER},
+            #{item.address,jdbcType=VARCHAR}, #{item.data,jdbcType=VARCHAR}, #{item.logindex,jdbcType=INTEGER},
+            #{item.removed,jdbcType=BIT}, #{item.type,jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+</mapper>
