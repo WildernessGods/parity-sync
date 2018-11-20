@@ -25,7 +25,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -156,12 +159,12 @@ public class ParityUpdateUtil {
                         return innerBlock;
                     });
 
-                    insertTransactions(resultBlock.getTransactions(), i, block.getTimestamp(), block.getUnclecount());
-                    insertUncles(resultBlock.getUncles(), block.getHash(), i);
-
                     if (authorService.selectByAddress(resultBlock.getAuthor()) == null) {
                         authorService.insertSelective(new Author(resultBlock.getAuthor(), 0));
                     }
+
+                    insertTransactions(resultBlock.getTransactions(), i, block.getTimestamp(), block.getUnclecount());
+                    insertUncles(resultBlock.getUncles(), block.getHash(), i);
                 });
             } catch (IOException e) {
                 logger.error("insertParity " + e.getMessage());
@@ -228,6 +231,8 @@ public class ParityUpdateUtil {
                     .map(t -> t.getTransactionsWithBLOBs(utils, timestamp))
                     .collect(Collectors.toList());
 
+
+
             transactionsService.batchInsertSelective(transactionsWithBLOBsList.stream()
                     .filter(r -> transactionsService.selectByTxHash(r.getHash()) == null)
                     .collect(Collectors.toList()));
@@ -235,12 +240,29 @@ public class ParityUpdateUtil {
             authorService.batchInsertSelective(transactionsWithBLOBsList.stream().map(TransactionsWithBLOBs::getAuthor).distinct()
                     .filter(author -> authorService.selectByAddress(author.getAddress()) == null).collect(Collectors.toList()));
 
+            Map<String, Long> blockFromCount = transactionsWithBLOBsList.stream()
+                    .collect(Collectors.groupingBy(TransactionsWithBLOBs::getBlockfrom, Collectors.counting()));
+
+            Map<String, Long> blockToCount = transactionsWithBLOBsList.stream().filter(t -> !t.getBlockto().equals("null"))
+                    .collect(Collectors.groupingBy(TransactionsWithBLOBs::getBlockto, Collectors.counting()));
+
+            Map<String, Long> createsCount = transactionsWithBLOBsList.stream().filter(t -> !t.getCreates().equals("null"))
+                    .collect(Collectors.groupingBy(TransactionsWithBLOBs::getCreates, Collectors.counting()));
+
+            Map<String, Long> updateMap = new HashMap<String, Long>() {{
+                putAll(blockFromCount);
+                putAll(blockToCount);
+                putAll(createsCount);
+            }};
+
+            updateMap.forEach(authorService::updateTransactionsCountByAddress);
+
             blockService.updateByPrimaryKeySelective(new Block(blockNumber,
-                    transactionsWithBLOBsList.stream().mapToDouble(Transactions::getFee).sum(),
-                    unclecount,
+                    transactionsWithBLOBsList.stream().filter(t -> !t.getBlockto().equals("null") && t.getCreates().equals("null")).count(),
+                    transactionsWithBLOBsList.stream().filter(t -> t.getBlockto().equals("null") && !t.getCreates().equals("null")).count(),
                     transactionsWithBLOBsList.stream().collect(averagingDouble(TransactionsWithBLOBs::getGasprice)) * 1_000_000_000,
-                    transactionsWithBLOBsList.stream().filter(t -> t.getBlockto() != null && t.getCreates() == null).count(),
-                    transactionsWithBLOBsList.stream().filter(t -> t.getBlockto() == null && t.getCreates() != null).count()
+                    transactionsWithBLOBsList.stream().mapToDouble(Transactions::getFee).sum(),
+                    unclecount
             ));
         }
     }

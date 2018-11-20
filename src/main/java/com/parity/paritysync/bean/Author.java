@@ -27,6 +27,11 @@ public class Author {
         this.uncles = 0L;
     }
 
+    public Author(String address, Long transactionscount) {
+        this.address = address;
+        this.transactionscount = transactionscount;
+    }
+
     public Long getId() {
         return id;
     }

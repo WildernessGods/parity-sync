@@ -193,7 +193,7 @@
                 balance = #{balance, jdbcType=VARCHAR},
             </if>
             <if test="transactionscount != null">
-                transactionsCount = #{transactionscount, jdbcType=INTEGER},
+                transactionsCount = #{transactionscount, jdbcType=BIGINT},
             </if>
             <if test="blocks != null">
                 blocks = #{blocks, jdbcType=BIGINT},
@@ -202,6 +202,10 @@
                 uncles = #{uncles, jdbcType=BIGINT},
             </if>
         </set>
+        where address = #{address, jdbcType=VARCHAR}
+    </update>
+    <update id="updateTransactionsCountByAddress" parameterType="com.parity.paritysync.bean.Author">
+        update Author set transactionsCount = transactionsCount + #{transactionscount, jdbcType=BIGINT}
         where address = #{address, jdbcType=VARCHAR}
     </update>
     <select id="selectAll" resultMap="BaseResultMap">

@@ -35,6 +35,10 @@ public class AuthorService {
         return authorMapper.updateSelectiveByAddress(author);
     }
 
+    public int updateTransactionsCountByAddress(String address, Long transactionscount) {
+        return authorMapper.updateTransactionsCountByAddress(address, transactionscount);
+    }
+
     public List<Author> selectAll() {
         return authorMapper.selectAll();
     }

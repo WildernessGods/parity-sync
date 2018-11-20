@@ -62,18 +62,20 @@ public class Block {
     public Block() {
     }
 
-    public Block(Long blockNumber, Double blockReward, Integer uncleCount, Double avgGasPrice, Long transactionsCount, Long contractTransactionsCount) {
+    public Block(Long blockNumber, Long transactionsCount, Long contractTransactionsCount, Double avgGasPrice, Double blockReward, Integer uncleCount) {
         this.number = blockNumber;
+
+        this.transactionscount = transactionsCount;
+        this.contracttransactionscount = contractTransactionsCount;
+
+        DecimalFormat decimalFormat = new DecimalFormat("000000.000");
+        this.avggasprice = Double.valueOf(decimalFormat.format(avgGasPrice));
 
         if (blockNumber <= 4369999) {
             this.blockreward = 5 + blockReward + uncleCount * ((double) 5 / 32);
         } else {
             this.blockreward = 3 + blockReward + uncleCount * ((double) 3 / 32);
         }
-        DecimalFormat decimalFormat = new DecimalFormat("000000.000");
-        this.avggasprice = Double.valueOf(decimalFormat.format(avgGasPrice));
-        this.transactionscount = transactionsCount;
-        this.contracttransactionscount = contractTransactionsCount;
     }
 
     public Block(Long blockNumber, Double unclesReward) {

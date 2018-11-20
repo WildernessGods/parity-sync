@@ -1,6 +1,7 @@
 package com.parity.paritysync.dao;
 
 import com.parity.paritysync.bean.Author;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -23,6 +24,8 @@ public interface AuthorMapper {
     Author selectByAddress(String address);
 
     int updateSelectiveByAddress(Author author);
+
+    int updateTransactionsCountByAddress(@Param("address") String address, @Param("transactionscount") Long transactionscount);
 
     List<Author> selectAll();
 
