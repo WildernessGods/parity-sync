@@ -5,6 +5,7 @@ import com.parity.paritysync.utils.Utils;
 import com.parity.paritysync.utils.parity.ParityRequest;
 
 import java.io.IOException;
+import java.util.Optional;
 
 public class ResultTransactions {
 
@@ -114,8 +115,8 @@ public class ResultTransactions {
         this.nonce = nonce;
     }
 
-    public String getTo() {
-        return to;
+    public Optional<String> getTo() {
+        return Optional.ofNullable(to);
     }
 
     public void setTo(String to) {
@@ -178,8 +179,8 @@ public class ResultTransactions {
         this.condition = condition;
     }
 
-    public String getCreates() {
-        return creates;
+    public Optional<String> getCreates() {
+        return Optional.ofNullable(creates);
     }
 
     public void setCreates(String creates) {

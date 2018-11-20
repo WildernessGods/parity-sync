@@ -3,6 +3,7 @@ package com.parity.paritysync.controller;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.parity.paritysync.bean.Block;
+import com.parity.paritysync.returntype.ReturnBlock;
 import com.parity.paritysync.service.BlockService;
 import com.parity.paritysync.utils.ParityLog;
 import com.parity.paritysync.utils.ReturnMessage;
@@ -28,8 +29,8 @@ public class BlockController {
     public ReturnMessage read(@RequestParam("pageNum") Long pageNum) {
 
         PageHelper.startPage(0, 20);
-        List<Block> blockList = blockService.selectAll(pageNum * 20);
-        PageInfo<Block> pageInfo = new PageInfo<>(blockList);
+        List<ReturnBlock> blockList = blockService.selectAll(pageNum * 20);
+        PageInfo<ReturnBlock> pageInfo = new PageInfo<>(blockList);
         return ReturnMessage.success(OPERATE_SUCCESS).add("block", pageInfo);
     }
 
@@ -45,12 +46,13 @@ public class BlockController {
         return ReturnMessage.success(OPERATE_SUCCESS).add("block", blockService.selectByHash(blockHash));
     }
 
-    @GetMapping("/block/author/{author}")
+    @ParityLog("根据地址查询区块数据")
+    @GetMapping("/block/author")
     public ReturnMessage readByBlockAuthor(@RequestParam("pageNum") Integer pageNum, @RequestParam("author") String author) {
 
         PageHelper.startPage(pageNum, 20);
-        List<Block> blockList = blockService.selectByAuthor(author);
-        PageInfo<Block> pageInfo = new PageInfo<>(blockList);
+        List<ReturnBlock> blockList = blockService.selectByAuthor(author);
+        PageInfo<ReturnBlock> pageInfo = new PageInfo<>(blockList);
         return ReturnMessage.success(OPERATE_SUCCESS).add("block", pageInfo);
     }
 }

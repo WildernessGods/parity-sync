@@ -388,25 +388,14 @@
         <include refid="Base_Column_List"/>
         from transactions where id >= #{index, jdbcType=INTEGER} limit #{pageSize, jdbcType=INTEGER}
     </select>
-
     <select id="selectAll" resultType="com.parity.paritysync.returntype.ReturnTransactions">
-        select
-        <include refid="Return_Column_List"/>
-        from transactions
-        order by id desc
-    </select>
-    <select id="selectAll_COUNT" resultType="java.lang.Long">
-        select max(id) from transactions
-    </select>
-
-    <select id="selectAllOpt1" resultType="com.parity.paritysync.returntype.ReturnTransactions">
         select
         <include refid="Return_Column_List"/>
         from transactions
         where id &lt;= (select max(id) from transactions) - #{index,jdbcType=BIGINT}
         order by id desc
     </select>
-    <select id="selectAllOpt2" resultType="com.parity.paritysync.returntype.ReturnTransactions">
+    <select id="selectAll2" resultType="com.parity.paritysync.returntype.ReturnTransactions">
         select
         <include refid="Return_Column_List"/>
         from transactions
@@ -414,35 +403,10 @@
         and ((select max(id) from transactions) - #{index2,jdbcType=BIGINT})
         order by id desc
     </select>
-    <select id="selectAllOpt3" resultType="com.parity.paritysync.returntype.ReturnTransactions">
-        select
-        <include refid="Return_Column_List"/>
-        from transactions
-        where id &lt;= (select id from transactions order by id desc limit #{index,jdbcType=BIGINT}, 1)
-        order by id desc
-    </select>
-    <select id="selectAllOpt1_COUNT" resultType="java.lang.Long">
+    <select id="selectAll_COUNT" resultType="java.lang.Long">
         select max(id) from transactions
     </select>
-    <select id="selectAllOpt2_COUNT" resultType="java.lang.Long">
-        select max(id) from transactions
-    </select>
-    <select id="selectAllOpt3_COUNT" resultType="java.lang.Long">
-        select max(id) from transactions
-    </select>
-
     <select id="selectByAuthor" resultType="com.parity.paritysync.returntype.ReturnTransactions">
-        select
-        <include refid="Return_Column_List"/>
-        from transactions
-        where blockFrom = #{author, jdbcType=VARCHAR} or blockTo = #{author, jdbcType=VARCHAR} or creates = #{author, jdbcType=VARCHAR}
-        order by id desc
-    </select>
-    <select id="selectByAuthor_COUNT" resultType="java.lang.Long">
-        select transactionsCount from author where address = #{author, jdbcType=VARCHAR}
-    </select>
-
-    <select id="selectByAuthorOpt" resultType="com.parity.paritysync.returntype.ReturnTransactions">
         select
         <include refid="Return_Column_List"/>
         from transactions
@@ -453,7 +417,7 @@
         and (blockFrom = #{author, jdbcType=VARCHAR} or blockTo = #{author, jdbcType=VARCHAR} or creates = #{author, jdbcType=VARCHAR})
         order by id desc
     </select>
-    <select id="selectByAuthorOpt_COUNT" resultType="java.lang.Long">
+    <select id="selectByAuthor_COUNT" resultType="java.lang.Long">
         select transactionsCount from author where address = #{author, jdbcType=VARCHAR}
     </select>
     <select id="selectByCreatest" resultType="com.parity.paritysync.returntype.ReturnContractTransactions">
@@ -465,5 +429,9 @@
     </select>
     <select id="selectByCreatest_COUNT" resultType="java.lang.Integer">
         select count from transactions_count where type = 2
+    </select>
+    <select id="selectCountByAuthor" resultType="java.lang.Long">
+        select count(*) from transactions
+        where blockFrom = #{author, jdbcType=VARCHAR} or blockTo = #{author, jdbcType=VARCHAR} or creates = #{author, jdbcType=VARCHAR}
     </select>
 </mapper>

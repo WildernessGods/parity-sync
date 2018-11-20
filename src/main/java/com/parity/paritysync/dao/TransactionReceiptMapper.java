@@ -6,17 +6,17 @@ import org.springframework.stereotype.Component;
 @Component
 public interface TransactionReceiptMapper {
 
-    Integer deleteByPrimaryKey(Long id);
+    int deleteByPrimaryKey(Long id);
 
-    Integer insert(TransactionReceipt record);
+    int insert(TransactionReceipt record);
 
-    Integer insertSelective(TransactionReceipt record);
+    int insertSelective(TransactionReceipt record);
 
     TransactionReceipt selectByPrimaryKey(Long id);
 
-    Integer updateByPrimaryKeySelective(TransactionReceipt record);
+    int updateByPrimaryKeySelective(TransactionReceipt record);
 
-    Integer updateByPrimaryKey(TransactionReceipt record);
+    int updateByPrimaryKey(TransactionReceipt record);
 
     TransactionReceipt selectByTransactionHash(String transactionHash);
 }

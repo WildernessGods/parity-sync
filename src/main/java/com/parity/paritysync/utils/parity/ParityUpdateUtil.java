@@ -56,9 +56,7 @@ public class ParityUpdateUtil {
 
     public ParityUpdateUtil(AuthorService authorService, BlockService blockService, BlockUncleService blockUncleService,
                             DailyTradingVolumeService dailyTradingVolumeService, TransactionsService transactionsService,
-                            TransactionReceiptService transactionReceiptService, ReceiptLogsService receiptLogsService, Utils utils
-    ) {
-
+                            TransactionReceiptService transactionReceiptService, ReceiptLogsService receiptLogsService, Utils utils) {
         this.authorService = authorService;
         this.blockService = blockService;
         this.blockUncleService = blockUncleService;
@@ -122,7 +120,7 @@ public class ParityUpdateUtil {
                 logger.info("blockList size = " + blockList.size() + " date = " + plusDays.toString());
 
                 DailyTradingVolume dailyTradingVolume = new DailyTradingVolume(plusDays.toString(),
-                        blockList.stream().mapToInt(Block::getTotaltransactionscount).sum());
+                        blockList.stream().mapToLong(b -> b.getTransactionscount() + b.getContracttransactionscount()).sum());
 
                 if (dailyTradingVolume.getCount() > 0) {
                     DailyTradingVolume selectByDate = dailyTradingVolumeService.selectByDate(plusDays.toString());
@@ -195,22 +193,25 @@ public class ParityUpdateUtil {
 //                e.printStackTrace();
 //            }
 
-            Block block = blockService.selectByPrimaryKey(i);
-            if (block != null) {
-                List<ReturnTransactions> returnTransactionsList = transactionsService.selectByBlockNumber(i);
-                if (returnTransactionsList != null) {
-                    logger.info("update blockReward block number = " + i);
-                    blockService.updateByPrimaryKeySelective(new Block(i, returnTransactionsList.stream().mapToDouble(ReturnTransactions::getFee).sum(),
-                            block.getUnclecount(),
-                            returnTransactionsList.stream().collect(averagingDouble(ReturnTransactions::getGasprice)) * 1_000_000_000));
-                }
+//            Block block = blockService.selectByPrimaryKey(i);
+//            if (block != null) {
+//                List<ReturnTransactions> returnTransactionsList = transactionsService.selectByBlockNumber(i);
+//                if (returnTransactionsList != null) {
+//                    logger.info("update blockReward block number = " + i);
+//                    blockService.updateByPrimaryKeySelective(new Block(i, returnTransactionsList.stream().mapToDouble(ReturnTransactions::getFee).sum(),
+//                            block.getUnclecount(),
+//                            returnTransactionsList.stream().collect(averagingDouble(ReturnTransactions::getGasprice)) * 1_000_000_000,
+//                            returnTransactionsList.stream().filter(t -> t.getBlockto() != null && t.getCreates() == null).count(),
+//                            returnTransactionsList.stream().filter(t -> t.getBlockto() == null && t.getCreates() != null).count()
+//                    ));
+//                }
 
 //                List<BlockUncle> blockUncleList = blockUncleService.selectByUncleByHash(block.getHash());
 //                if (blockUncleList != null && blockUncleList.size() > 0) {
 //                    logger.info("update unclesReward block number = " + i);
 //                    blockService.updateByPrimaryKeySelective(new Block(i, blockUncleList.stream().mapToDouble(u -> u.getSingleUncleReward(i)).sum()));
 //                }
-            }
+//            }
         });
     }
 
@@ -221,31 +222,26 @@ public class ParityUpdateUtil {
      */
     private void insertTransactions(List<ResultTransactions> resultTransactionsList, Long blockNumber, String timestamp, Integer unclecount) {
 
-        if (resultTransactionsList != null) {
+        if (resultTransactionsList != null && resultTransactionsList.size() > 0) {
 
             List<TransactionsWithBLOBs> transactionsWithBLOBsList = resultTransactionsList.stream()
-                    .filter(r -> transactionsService.selectByTxHash(r.getHash()) == null)
                     .map(t -> t.getTransactionsWithBLOBs(utils, timestamp))
                     .collect(Collectors.toList());
 
-            if (transactionsWithBLOBsList.size() > 0) {
+            transactionsService.batchInsertSelective(transactionsWithBLOBsList.stream()
+                    .filter(r -> transactionsService.selectByTxHash(r.getHash()) == null)
+                    .collect(Collectors.toList()));
 
-                List<Author> authorList = transactionsWithBLOBsList.stream().map(TransactionsWithBLOBs::getAuthor).distinct()
-                        .filter(author -> authorService.selectByAddress(author.getAddress()) == null).collect(Collectors.toList());
-
-                if (authorList.size() > 0) {
-                    logger.info("insert author size = " + authorList.size());
-                    authorService.batchInsertSelective(authorList);
-                }
-
-                logger.info("insert transactions size = " + transactionsWithBLOBsList.size());
-                transactionsService.batchInsertSelective(transactionsWithBLOBsList);
-            }
+            authorService.batchInsertSelective(transactionsWithBLOBsList.stream().map(TransactionsWithBLOBs::getAuthor).distinct()
+                    .filter(author -> authorService.selectByAddress(author.getAddress()) == null).collect(Collectors.toList()));
 
             blockService.updateByPrimaryKeySelective(new Block(blockNumber,
                     transactionsWithBLOBsList.stream().mapToDouble(Transactions::getFee).sum(),
                     unclecount,
-                    transactionsWithBLOBsList.stream().collect(averagingDouble(TransactionsWithBLOBs::getGasprice)) * 1_000_000_000));
+                    transactionsWithBLOBsList.stream().collect(averagingDouble(TransactionsWithBLOBs::getGasprice)) * 1_000_000_000,
+                    transactionsWithBLOBsList.stream().filter(t -> t.getBlockto() != null && t.getCreates() == null).count(),
+                    transactionsWithBLOBsList.stream().filter(t -> t.getBlockto() == null && t.getCreates() != null).count()
+            ));
         }
     }
 
@@ -300,20 +296,18 @@ public class ParityUpdateUtil {
 
             try {
                 ResultGetBlock resultGetUncleBlock = ParityRequest.eth_getUncleByBlockHashAndIndex(blockHash, uncles.indexOf(uncle));
-
-                resultGetUncleBlock.getResult().ifPresent(resultBlock -> {
-                    blockUncleService.insertSelective(new BlockUncle(resultBlock, uncles.indexOf(uncle), blockHash, blockNumber, utils));
-
-//                    List<BlockUncle> blockUncleList = blockUncleService.selectByUncleByHash(blockHash);
-//                    if (blockUncleList != null && blockUncleList.size() > 0) {
-//                        blockService.updateByPrimaryKeySelective(new Block(blockNumber,
-//                                blockUncleList.stream().mapToDouble(blockUncle -> blockUncle.getSingleUncleReward(blockNumber)).sum()));
-//                    }
-                });
+                resultGetUncleBlock.getResult().ifPresent(resultBlock -> blockUncleService.insertSelective(new BlockUncle(resultBlock, uncles.indexOf(uncle),
+                        blockHash, blockNumber, utils)));
             } catch (IOException e) {
                 logger.error("insertUncles = " + e.getMessage());
             }
         });
+
+        List<BlockUncle> blockUncleList = blockUncleService.selectByUncleByHash(blockHash);
+        if (blockUncleList != null && blockUncleList.size() > 0) {
+            blockService.updateByPrimaryKeySelective(new Block(blockNumber,
+                    blockUncleList.stream().mapToDouble(blockUncle -> blockUncle.getSingleUncleReward(blockNumber)).sum()));
+        }
     }
 
     /**
@@ -331,43 +325,47 @@ public class ParityUpdateUtil {
 
             try {
                 ResultGetBlock resultGetUncleBlock = ParityRequest.eth_getUncleByBlockHashAndIndex(blockHash, uncles.indexOf(u));
-
-                resultGetUncleBlock.getResult().ifPresent(resultBlock -> {
-                    blockUncleService.updateByPrimaryKeySelective(new BlockUncle(resultBlock, uncles.indexOf(u), blockHash, blockNumber, utils));
-
-                    List<BlockUncle> blockUncleList = blockUncleService.selectByUncleByHash(blockHash);
-                    if (blockUncleList != null && blockUncleList.size() > 0) {
-                        blockService.updateByPrimaryKeySelective(new Block(blockNumber,
-                                blockUncleList.stream().mapToDouble(blockUncle -> blockUncle.getSingleUncleReward(blockNumber)).sum()));
-                    }
-                });
+                resultGetUncleBlock.getResult().ifPresent(resultBlock -> blockUncleService.updateByPrimaryKeySelective(new BlockUncle(resultBlock,
+                        uncles.indexOf(u), blockHash, blockNumber, utils)));
             } catch (IOException e) {
                 logger.error("insertUncles = " + e.getMessage());
             }
         });
+
+        List<BlockUncle> blockUncleList = blockUncleService.selectByUncleByHash(blockHash);
+        if (blockUncleList != null && blockUncleList.size() > 0) {
+            blockService.updateByPrimaryKeySelective(new Block(blockNumber,
+                    blockUncleList.stream().mapToDouble(blockUncle -> blockUncle.getSingleUncleReward(blockNumber)).sum()));
+        }
     }
 
     /**
-     * 同步地址的交易总量
+     * 同步地址数据
      */
-    public void updateAuthor(Long maxId) {
+    public void updateAuthor(long start, Long end) {
 
-        LongStream.rangeClosed(1, maxId).boxed().forEach(i -> {
+        LongStream.rangeClosed(start, end).boxed().forEach(i -> {
 
             Author author = authorService.selectByPrimaryKey(i);
-
             if (author != null) {
-
-                List<ReturnTransactions> returnTransactionsList = transactionsService.selectByAuthor(author.getAddress());
-
-                logger.info("id = " + i);
-
-                if (returnTransactionsList != null && returnTransactionsList.size() != author.getTransactionscount()) {
-                    logger.info("id = " + i + " address = " + author.getAddress() + " size = " + returnTransactionsList.size() + " count = " + author.getTransactionscount());
-
-                    author.setTransactionscount((long) returnTransactionsList.size());
-                    authorService.updateSelectiveByAddress(author);
+                long transactionsCount = transactionsService.selectCountByAuthor(author.getAddress());
+                if (transactionsCount != author.getTransactionscount()) {
+                    logger.info("id = " + i + " address = " + author.getAddress() + " size = " + transactionsCount + " count = " + author.getTransactionscount());
+                    author.setTransactionscount(transactionsCount);
                 }
+
+                long blockCount = blockService.selectCountByAuthor(author.getAddress());
+                if (blockCount != author.getTransactionscount()) {
+                    logger.info("id = " + i + " address = " + author.getAddress() + " size = " + blockCount + " count = " + author.getBlocks());
+                    author.setBlocks(blockCount);
+                }
+
+                long unclesCount = blockUncleService.selectCountByAuthor(author.getAddress());
+                if (unclesCount != author.getTransactionscount()) {
+                    logger.info("id = " + i + " address = " + author.getAddress() + " size = " + unclesCount + " count = " + author.getUncles());
+                    author.setUncles(unclesCount);
+                }
+                authorService.updateSelectiveByAddress(author);
             }
         });
     }

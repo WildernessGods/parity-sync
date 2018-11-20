@@ -23,7 +23,6 @@
         <result column="timestamp" jdbcType="TIMESTAMP" property="timestamp"/>
         <result column="transactionsCount" jdbcType="INTEGER" property="transactionscount"/>
         <result column="contractTransactionsCount" jdbcType="INTEGER" property="contracttransactionscount"/>
-        <result column="totalTransactionsCount" jdbcType="INTEGER" property="totaltransactionscount"/>
         <result column="uncleCount" jdbcType="INTEGER" property="unclecount"/>
         <result column="avgGasPrice" jdbcType="DOUBLE" property="avggasprice"/>
         <result column="blockReward" jdbcType="DOUBLE" property="blockreward"/>
@@ -32,8 +31,12 @@
     <sql id="Base_Column_List">
         number, hash, parentHash, nonce, mixHash, sha3Uncles, logsBloom, transactionsRoot,
         stateRoot, receiptsRoot, author, miner, difficulty, totalDifficulty, extraData, size,
-        gasLimit, gasUsed, timestamp, transactionsCount, contractTransactionsCount, totalTransactionsCount,
-        uncleCount, avgGasPrice, blockReward, unclesReward
+        gasLimit, gasUsed, timestamp, transactionsCount, contractTransactionsCount, uncleCount,
+        avgGasPrice, blockReward, unclesReward
+    </sql>
+    <sql id="Return_Column_List">
+        number, timestamp, transactionsCount, contractTransactionsCount, hash, parentHash, sha3Uncles, author, miner,
+        difficulty, totalDifficulty, size, gasUsed, gasLimit, nonce, avgGasPrice, blockReward, unclesReward, extraData
     </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
@@ -68,7 +71,6 @@
                            timestamp,
                            transactionsCount,
                            contractTransactionsCount,
-                           totalTransactionsCount,
                            uncleCount,
                            avgGasPrice,
                            blockReward,
@@ -92,9 +94,8 @@
                 #{gaslimit,jdbcType=BIGINT},
                 #{gasused,jdbcType=BIGINT},
                 #{timestamp,jdbcType=TIMESTAMP},
-                #{transactionscount,jdbcType=INTEGER},
-                #{contracttransactionscount,jdbcType=INTEGER},
-                #{totaltransactionscount,jdbcType=INTEGER},
+                #{transactionscount,jdbcType=BIGINT},
+                #{contracttransactionscount,jdbcType=BIGINT},
                 #{unclecount,jdbcType=INTEGER},
                 #{avggasprice,jdbcType=DOUBLE},
                 #{blockreward,jdbcType=DOUBLE},
@@ -165,9 +166,6 @@
             </if>
             <if test="contracttransactionscount != null">
                 contractTransactionsCount,
-            </if>
-            <if test="totaltransactionscount != null">
-                totalTransactionsCount,
             </if>
             <if test="unclecount != null">
                 uncleCount,
@@ -241,13 +239,10 @@
                 #{timestamp,jdbcType=TIMESTAMP},
             </if>
             <if test="transactionscount != null">
-                #{transactionscount,jdbcType=INTEGER},
+                #{transactionscount,jdbcType=BIGINT},
             </if>
             <if test="contracttransactionscount != null">
-                #{contracttransactionscount,jdbcType=INTEGER},
-            </if>
-            <if test="totaltransactionscount != null">
-                #{totaltransactionscount,jdbcType=INTEGER},
+                #{contracttransactionscount,jdbcType=BIGINT},
             </if>
             <if test="unclecount != null">
                 #{unclecount,jdbcType=INTEGER},
@@ -321,13 +316,10 @@
                 timestamp = #{timestamp,jdbcType=TIMESTAMP},
             </if>
             <if test="transactionscount != null">
-                transactionsCount = #{transactionscount,jdbcType=INTEGER},
+                transactionsCount = #{transactionscount,jdbcType=BIGINT},
             </if>
             <if test="contracttransactionscount != null">
-                contractTransactionsCount = #{contracttransactionscount,jdbcType=INTEGER},
-            </if>
-            <if test="totaltransactionscount != null">
-                totalTransactionsCount = #{totaltransactionscount,jdbcType=INTEGER},
+                contractTransactionsCount = #{contracttransactionscount,jdbcType=BIGINT},
             </if>
             <if test="unclecount != null">
                 uncleCount = #{unclecount,jdbcType=INTEGER},
@@ -364,9 +356,8 @@
             gasLimit                  = #{gaslimit,jdbcType=BIGINT},
             gasUsed                   = #{gasused,jdbcType=BIGINT},
             timestamp                 = #{timestamp,jdbcType=TIMESTAMP},
-            transactionsCount         = #{transactionscount,jdbcType=INTEGER},
-            contractTransactionsCount = #{contracttransactionscount,jdbcType=INTEGER},
-            totalTransactionsCount    = #{totaltransactionscount,jdbcType=INTEGER},
+            transactionsCount         = #{transactionscount,jdbcType=BIGINT},
+            contractTransactionsCount = #{contracttransactionscount,jdbcType=BIGINT},
             uncleCount                = #{unclecount,jdbcType=INTEGER},
             avgGasPrice               = #{avggasprice,jdbcType=DOUBLE},
             blockReward               = #{blockreward,jdbcType=DOUBLE},
@@ -375,7 +366,7 @@
     </update>
     <insert id="batchInsertSelective" parameterType="java.util.List">
         insert into block (number, hash, parentHash, nonce, mixHash, sha3Uncles, logsBloom, transactionsRoot, stateRoot, receiptsRoot,
-        author, miner, difficulty, totalDifficulty, extraData, size, gasLimit, gasUsed, timestamp, transactionsCount, totalTransactionsCount,
+        author, miner, difficulty, totalDifficulty, extraData, size, gasLimit, gasUsed, timestamp, transactionsCount,
         contractTransactionsCount, uncleCount, avgGasPrice, blockReward, unclesReward)
         values
         <foreach collection="list" index="index" item="item" separator=",">
@@ -385,9 +376,8 @@
             #{item.author,jdbcType=VARCHAR}, #{item.miner,jdbcType=VARCHAR}, #{item.difficulty,jdbcType=VARCHAR},
             #{item.totaldifficulty,jdbcType=VARCHAR}, #{item.extradata,jdbcType=VARCHAR}, #{item.size,jdbcType=VARCHAR},
             #{item.gaslimit,jdbcType=BIGINT}, #{item.gasused,jdbcType=BIGINT}, #{item.timestamp,jdbcType=VARCHAR},
-            #{item.transactionscount,jdbcType=INTEGER}, #{item.totaltransactionscount,jdbcType=INTEGER},
-            #{item.contractTransactionsCount,jdbcType=INTEGER}, #{item.unclecount,jdbcType=INTEGER}, #{item.avggasprice,jdbcType=DOUBLE},
-            #{item.blockreward,jdbcType=DOUBLE}, #{item.unclesreward,jdbcType=DOUBLE} )
+            #{item.transactionscount,jdbcType=BIGINT}, #{item.contractTransactionsCount,jdbcType=BIGINT}, #{item.unclecount,jdbcType=INTEGER},
+            #{item.avggasprice,jdbcType=DOUBLE}, #{item.blockreward,jdbcType=DOUBLE}, #{item.unclesreward,jdbcType=DOUBLE} )
         </foreach>
     </insert>
     <select id="selectByHash" resultType="com.parity.paritysync.bean.Block">
@@ -395,9 +385,9 @@
         <include refid="Base_Column_List"/>
         from block where hash = #{hash, jdbcType=VARCHAR}
     </select>
-    <select id="selectAll" resultType="com.parity.paritysync.bean.Block">
+    <select id="selectAll" resultType="com.parity.paritysync.returntype.ReturnBlock">
         select
-        <include refid="Base_Column_List"/>
+        <include refid="Return_Column_List"/>
         from block
         where number &lt;= (select max(number) from block) - #{index,jdbcType=BIGINT}
         order by number desc
@@ -406,12 +396,12 @@
         select max(number) + 1
         from block
     </select>
-    <select id="selectByAuthor" resultType="com.parity.paritysync.bean.Block">
+    <select id="selectByAuthor" resultType="com.parity.paritysync.returntype.ReturnBlock">
         select
-        <include refid="Base_Column_List"/>
+        <include refid="Return_Column_List"/>
         from block where author = #{author, jdbcType=VARCHAR}
     </select>
-    <select id="selectCountByAuthor" resultType="java.lang.Integer">
+    <select id="selectCountByAuthor" resultType="java.lang.Long">
         select count(*)
         from block
         where author = #{address, jdbcType=VARCHAR}

@@ -24,7 +24,7 @@ public class TransactionsWithBLOBs extends Transactions {
         this.setFee(this.getGasprice() * this.getGasused());
         this.blockinput = resultTransactions.getInput();
         this.setNonce(resultTransactions.getNonce());
-        this.setBlockto(resultTransactions.getTo());
+        this.setBlockto(resultTransactions.getTo().orElse("null"));
         this.setTransactionindex(resultTransactions.getTransactionIndex());
         this.setTransactionvalue(utils.toDouble(resultTransactions.getValue()) / 1_000_000_000_000_000_000L);
         this.setStatus(receipt.getStatus() != null ? Integer.valueOf(receipt.getStatus().substring(2), 16) : -1);
@@ -33,7 +33,7 @@ public class TransactionsWithBLOBs extends Transactions {
         this.setS(resultTransactions.getS());
         this.setChainid(resultTransactions.getChainid());
         this.setBlockcondition(resultTransactions.getCondition());
-        this.setCreates(resultTransactions.getCreates());
+        this.setCreates(resultTransactions.getCreates().orElse("null"));
         this.setPublickey(resultTransactions.getPublicKey());
         this.raw = resultTransactions.getRaw();
         this.setStandardv(resultTransactions.getStandardV());

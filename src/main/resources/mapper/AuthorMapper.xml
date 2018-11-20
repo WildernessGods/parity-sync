@@ -7,8 +7,8 @@
         <result column="type" jdbcType="INTEGER" property="type"/>
         <result column="balance" jdbcType="VARCHAR" property="balance"/>
         <result column="transactionsCount" jdbcType="BIGINT" property="transactionscount"/>
-        <result column="blocks" jdbcType="INTEGER" property="blocks"/>
-        <result column="uncles" jdbcType="INTEGER" property="uncles"/>
+        <result column="blocks" jdbcType="BIGINT" property="blocks"/>
+        <result column="uncles" jdbcType="BIGINT" property="uncles"/>
     </resultMap>
     <sql id="Example_Where_Clause">
         <where>
@@ -86,8 +86,8 @@
       balance, transactionsCount, blocks, 
       uncles)
     values (#{id,jdbcType=BIGINT}, #{address,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, 
-      #{balance,jdbcType=VARCHAR}, #{transactionscount,jdbcType=BIGINT}, #{blocks,jdbcType=INTEGER},
-      #{uncles,jdbcType=INTEGER})
+      #{balance,jdbcType=VARCHAR}, #{transactionscount,jdbcType=BIGINT}, #{blocks,jdbcType=BIGINT},
+      #{uncles,jdbcType=BIGINT})
   </insert>
     <insert id="insertSelective" parameterType="com.parity.paritysync.bean.Author">
         insert into author
@@ -131,10 +131,10 @@
                 #{transactionscount,jdbcType=BIGINT},
             </if>
             <if test="blocks != null">
-                #{blocks,jdbcType=INTEGER},
+                #{blocks,jdbcType=BIGINT},
             </if>
             <if test="uncles != null">
-                #{uncles,jdbcType=INTEGER},
+                #{uncles,jdbcType=BIGINT},
             </if>
         </trim>
     </insert>
@@ -143,7 +143,7 @@
         values
         <foreach collection="list" index="index" item="item" separator=",">
             (#{item.address,jdbcType=VARCHAR}, #{item.type,jdbcType=INTEGER}, #{item.balance,jdbcType=VARCHAR},
-            #{item.transactionscount,jdbcType=BIGINT}, #{item.blocks,jdbcType=INTEGER}, #{item.uncles,jdbcType=INTEGER})
+            #{item.transactionscount,jdbcType=BIGINT}, #{item.blocks,jdbcType=BIGINT}, #{item.uncles,jdbcType=BIGINT})
         </foreach>
     </insert>
     <update id="updateByPrimaryKeySelective" parameterType="com.parity.paritysync.bean.Author">
@@ -162,10 +162,10 @@
                 transactionsCount = #{transactionscount,jdbcType=BIGINT},
             </if>
             <if test="blocks != null">
-                blocks = #{blocks,jdbcType=INTEGER},
+                blocks = #{blocks,jdbcType=BIGINT},
             </if>
             <if test="uncles != null">
-                uncles = #{uncles,jdbcType=INTEGER},
+                uncles = #{uncles,jdbcType=BIGINT},
             </if>
         </set>
         where id = #{id,jdbcType=BIGINT}
@@ -176,8 +176,8 @@
       type = #{type,jdbcType=INTEGER},
       balance = #{balance,jdbcType=VARCHAR},
       transactionsCount = #{transactionscount,jdbcType=BIGINT},
-      blocks = #{blocks,jdbcType=INTEGER},
-      uncles = #{uncles,jdbcType=INTEGER}
+      blocks = #{blocks,jdbcType=BIGINT},
+      uncles = #{uncles,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
     <select id="selectByAddress" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -196,10 +196,10 @@
                 transactionsCount = #{transactionscount, jdbcType=INTEGER},
             </if>
             <if test="blocks != null">
-                blocks = #{blocks, jdbcType=INTEGER},
+                blocks = #{blocks, jdbcType=BIGINT},
             </if>
             <if test="uncles != null">
-                uncles = #{uncles, jdbcType=INTEGER},
+                uncles = #{uncles, jdbcType=BIGINT},
             </if>
         </set>
         where address = #{address, jdbcType=VARCHAR}

@@ -33,48 +33,12 @@ public class TransactionsController {
         this.parityUpdateUtil = parityUpdateUtil;
     }
 
-    @ParityLog("分页查询所有交易记录-0")
+    @ParityLog("分页查询所有交易记录")
     @GetMapping("/transactions")
-    public ReturnMessage read(@RequestParam("pageNum") Integer pageNum) {
-
-        PageHelper.startPage(pageNum, 20);
-        List<ReturnTransactions> returnTransactionsList = transactionsService.selectAll();
-        PageInfo<ReturnTransactions> pageInfo = new PageInfo<>(returnTransactionsList);
-        parityUpdateUtil.getBlockConfirmationsCount(pageInfo.getList());
-
-        return ReturnMessage.success(OPERATE_SUCCESS).add("transactions", pageInfo);
-    }
-
-    @ParityLog("分页查询所有交易记录-1")
-    @GetMapping("/transactionsOpt1")
     public ReturnMessage readOpt1(@RequestParam("pageNum") Long pageNum) {
 
         PageHelper.startPage(0, 20);
-        List<ReturnTransactions> returnTransactionsList = transactionsService.selectAllOpt1(pageNum * 20);
-        PageInfo<ReturnTransactions> pageInfo = new PageInfo<>(returnTransactionsList);
-        parityUpdateUtil.getBlockConfirmationsCount(pageInfo.getList());
-
-        return ReturnMessage.success(OPERATE_SUCCESS).add("transactions", pageInfo);
-    }
-
-    @ParityLog("分页查询所有交易记录-2")
-    @GetMapping("/transactionsOpt2")
-    public ReturnMessage readOpt2(@RequestParam("pageNum") Long pageNum) {
-
-        PageHelper.startPage(0, 20);
-        List<ReturnTransactions> returnTransactionsList = transactionsService.selectAllOpt2(pageNum * 20, (pageNum - 1) * 20);
-        PageInfo<ReturnTransactions> pageInfo = new PageInfo<>(returnTransactionsList);
-        parityUpdateUtil.getBlockConfirmationsCount(pageInfo.getList());
-
-        return ReturnMessage.success(OPERATE_SUCCESS).add("transactions", pageInfo);
-    }
-
-    @ParityLog("分页查询所有交易记录-3")
-    @GetMapping("/transactionsOpt3")
-    public ReturnMessage readOpt3(@RequestParam("pageNum") Long pageNum) {
-
-        PageHelper.startPage(0, 20);
-        List<ReturnTransactions> returnTransactionsList = transactionsService.selectAllOpt3(pageNum * 20);
+        List<ReturnTransactions> returnTransactionsList = transactionsService.selectAll(pageNum * 20);
         PageInfo<ReturnTransactions> pageInfo = new PageInfo<>(returnTransactionsList);
         parityUpdateUtil.getBlockConfirmationsCount(pageInfo.getList());
 
@@ -111,21 +75,10 @@ public class TransactionsController {
 
     @ParityLog("根据地址查询交易记录")
     @GetMapping("/transactions/author")
-    public ReturnMessage readByAuthor(@RequestParam("author") String author, @RequestParam("pageNum") Integer pageNum) {
-
-        PageHelper.startPage(pageNum, 20);
-        List<ReturnTransactions> returnTransactionsList = transactionsService.selectByAuthor(author);
-        PageInfo<ReturnTransactions> pageInfo = new PageInfo<>(returnTransactionsList);
-
-        return ReturnMessage.success(OPERATE_SUCCESS).add("transactions", pageInfo);
-    }
-
-    @ParityLog("根据地址查询交易记录Opt")
-    @GetMapping("/transactions/authorOpt")
     public ReturnMessage readByAuthorOpt(@RequestParam("author") String author, @RequestParam("pageNum") Long pageNum) {
 
         PageHelper.startPage(0, 20);
-        List<ReturnTransactions> returnTransactionsList = transactionsService.selectByAuthorOpt(author, pageNum * 20);
+        List<ReturnTransactions> returnTransactionsList = transactionsService.selectByAuthor(author, pageNum * 20);
         PageInfo<ReturnTransactions> pageInfo = new PageInfo<>(returnTransactionsList);
 
         return ReturnMessage.success(OPERATE_SUCCESS).add("transactions", pageInfo);

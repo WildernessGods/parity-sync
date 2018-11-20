@@ -35,4 +35,8 @@ public class BlockUncleService {
     public int updateByPrimaryKeySelective(BlockUncle blockUncle) {
         return blockUncleMapper.updateByPrimaryKeySelective(blockUncle);
     }
+
+    public long selectCountByAuthor(String address) {
+        return blockUncleMapper.selectCountByAuthor(address);
+    }
 }

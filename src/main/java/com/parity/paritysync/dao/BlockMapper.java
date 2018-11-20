@@ -1,6 +1,7 @@
 package com.parity.paritysync.dao;
 
 import com.parity.paritysync.bean.Block;
+import com.parity.paritysync.returntype.ReturnBlock;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -8,31 +9,31 @@ import java.util.List;
 @Component
 public interface BlockMapper {
 
-    Integer deleteByPrimaryKey(Long number);
+    int deleteByPrimaryKey(Long number);
 
-    Integer insert(Block record);
+    int insert(Block record);
 
-    Integer insertSelective(Block record);
+    int insertSelective(Block record);
 
     Block selectByPrimaryKey(Long number);
 
-    Integer updateByPrimaryKeySelective(Block record);
+    int updateByPrimaryKeySelective(Block record);
 
-    Integer updateByPrimaryKey(Block record);
+    int updateByPrimaryKey(Block record);
 
-    List<Block> selectAll(Long index);
+    List<ReturnBlock> selectAll(Long index);
 
     List<Block> selectByPage(Integer pageOffset, Integer pageSize);
 
-    List<Block> selectByAuthor(String author);
+    List<ReturnBlock> selectByAuthor(String author);
 
-    Integer selectCountByAuthor(String author);
+    long selectCountByAuthor(String author);
 
     Block selectByHash(String hash);
 
-    Integer batchInsertSelective(List<Block> blockList);
+    int batchInsertSelective(List<Block> blockList);
 
-    Long selectAll_COUNT();
+    long selectAll_COUNT();
 
     List<Block> selectByDate(String date);
 }

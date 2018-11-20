@@ -28,7 +28,7 @@
     <insert id="insert" parameterType="com.parity.paritysync.bean.DailyTradingVolume">
     insert into daily_trading_volume (id, transactionDate, count
       )
-    values (#{id,jdbcType=INTEGER}, #{transactiondate,jdbcType=VARCHAR}, #{count,jdbcType=INTEGER}
+    values (#{id,jdbcType=INTEGER}, #{transactiondate,jdbcType=VARCHAR}, #{count,jdbcType=BIGINT}
       )
   </insert>
     <insert id="insertSelective" parameterType="com.parity.paritysync.bean.DailyTradingVolume">
@@ -52,7 +52,7 @@
                 #{transactiondate,jdbcType=VARCHAR},
             </if>
             <if test="count != null">
-                #{count,jdbcType=INTEGER},
+                #{count,jdbcType=BIGINT},
             </if>
         </trim>
     </insert>
@@ -63,7 +63,7 @@
                 transactionDate = #{transactiondate,jdbcType=VARCHAR},
             </if>
             <if test="count != null">
-                count = #{count,jdbcType=INTEGER},
+                count = #{count,jdbcType=BIGINT},
             </if>
         </set>
         where id = #{id,jdbcType=INTEGER}
@@ -71,7 +71,7 @@
     <update id="updateByPrimaryKey" parameterType="com.parity.paritysync.bean.DailyTradingVolume">
     update daily_trading_volume
     set transactionDate = #{transactiondate,jdbcType=VARCHAR},
-      count = #{count,jdbcType=INTEGER}
+      count = #{count,jdbcType=BIGINT}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

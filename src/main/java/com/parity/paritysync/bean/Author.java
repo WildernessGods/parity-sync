@@ -12,9 +12,9 @@ public class Author {
 
     private Long transactionscount;
 
-    private Integer blocks;
+    private Long blocks;
 
-    private Integer uncles;
+    private Long uncles;
 
     public Author() {
     }
@@ -23,6 +23,8 @@ public class Author {
         this.address = address;
         this.type = type;
         this.transactionscount = 0L;
+        this.blocks = 0L;
+        this.uncles = 0L;
     }
 
     public Long getId() {
@@ -65,19 +67,19 @@ public class Author {
         this.transactionscount = transactionscount;
     }
 
-    public Integer getBlocks() {
+    public Long getBlocks() {
         return blocks;
     }
 
-    public void setBlocks(Integer blocks) {
+    public void setBlocks(Long blocks) {
         this.blocks = blocks;
     }
 
-    public Integer getUncles() {
+    public Long getUncles() {
         return uncles;
     }
 
-    public void setUncles(Integer uncles) {
+    public void setUncles(Long uncles) {
         this.uncles = uncles;
     }
 

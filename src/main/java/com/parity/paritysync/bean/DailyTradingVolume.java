@@ -6,12 +6,12 @@ public class DailyTradingVolume {
 
     private String transactiondate;
 
-    private Integer count;
+    private Long count;
 
     public DailyTradingVolume() {
     }
 
-    public DailyTradingVolume(String transactiondate, Integer count) {
+    public DailyTradingVolume(String transactiondate, Long count) {
         this.transactiondate = transactiondate;
         this.count = count;
     }
@@ -32,11 +32,11 @@ public class DailyTradingVolume {
         this.transactiondate = transactiondate;
     }
 
-    public Integer getCount() {
+    public Long getCount() {
         return count;
     }
 
-    public void setCount(Integer count) {
+    public void setCount(Long count) {
         this.count = count;
     }
 }

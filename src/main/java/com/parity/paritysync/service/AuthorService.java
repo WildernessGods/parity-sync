@@ -2,12 +2,16 @@ package com.parity.paritysync.service;
 
 import com.parity.paritysync.bean.Author;
 import com.parity.paritysync.dao.AuthorMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class AuthorService {
+
+    private Logger logger = LoggerFactory.getLogger(AuthorService.class);
 
     private final AuthorMapper authorMapper;
 
@@ -36,6 +40,10 @@ public class AuthorService {
     }
 
     public int batchInsertSelective(List<Author> authorList) {
-        return authorMapper.batchInsertSelective(authorList);
+        if (authorList != null && authorList.size() > 0) {
+            logger.info("insert author size = " + authorList.size());
+            return authorMapper.batchInsertSelective(authorList);
+        }
+        return 0;
     }
 }

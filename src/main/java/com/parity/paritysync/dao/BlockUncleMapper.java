@@ -23,4 +23,5 @@ public interface BlockUncleMapper {
 
     List<ReturnBlockUncle> selectAll();
 
+    long selectCountByAuthor(String address);
 }

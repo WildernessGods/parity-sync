@@ -2,6 +2,7 @@ package com.parity.paritysync.service;
 
 import com.parity.paritysync.bean.Block;
 import com.parity.paritysync.dao.BlockMapper;
+import com.parity.paritysync.returntype.ReturnBlock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ public class BlockService {
         this.blockMapper = blockMapper;
     }
 
-    public List<Block> selectAll(Long index) {
+    public List<ReturnBlock> selectAll(Long index) {
         return blockMapper.selectAll(index);
     }
 
@@ -32,11 +33,11 @@ public class BlockService {
         return blockMapper.selectByPage(pageOffset, pageSize);
     }
 
-    public List<Block> selectByAuthor(String author) {
+    public List<ReturnBlock> selectByAuthor(String author) {
         return blockMapper.selectByAuthor(author);
     }
 
-    public int selectCountByAuthor(String author) {
+    public long selectCountByAuthor(String author) {
         return blockMapper.selectCountByAuthor(author);
     }
 

@@ -16,7 +16,7 @@ public class ResultCommonSyncApplicationTests {
 
     @Test
     public void insertParity() {
-        parityUpdateUtil.insertParity(2779639, 4_200_000);
+        parityUpdateUtil.insertParity(2827146, 4_200_000);
     }
 
     @Test
@@ -26,7 +26,7 @@ public class ResultCommonSyncApplicationTests {
 
     @Test
     public void updateUncles() {
-        parityUpdateUtil.traversingUncles(10000, 500000);
+        parityUpdateUtil.traversingUncles(500000, 2789989);
     }
 
     @Test
@@ -36,6 +36,6 @@ public class ResultCommonSyncApplicationTests {
 
     @Test
     public void updateAuthor() {
-        parityUpdateUtil.updateAuthor(1000L);
+        parityUpdateUtil.updateAuthor(1, 1000L);
     }
 }

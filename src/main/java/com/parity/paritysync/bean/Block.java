@@ -47,11 +47,9 @@ public class Block {
 
     private String timestamp;
 
-    private Integer transactionscount;
+    private Long transactionscount;
 
-    private Integer contracttransactionscount;
-
-    private Integer totaltransactionscount;
+    private Long contracttransactionscount;
 
     private Integer unclecount;
 
@@ -64,7 +62,7 @@ public class Block {
     public Block() {
     }
 
-    public Block(Long blockNumber, Double blockReward, Integer uncleCount, Double avgGasPrice) {
+    public Block(Long blockNumber, Double blockReward, Integer uncleCount, Double avgGasPrice, Long transactionsCount, Long contractTransactionsCount) {
         this.number = blockNumber;
 
         if (blockNumber <= 4369999) {
@@ -72,8 +70,10 @@ public class Block {
         } else {
             this.blockreward = 3 + blockReward + uncleCount * ((double) 3 / 32);
         }
-        DecimalFormat decimalFormat = new DecimalFormat("0000000.000");
-//        this.avggasprice = Double.valueOf(decimalFormat.format(avgGasPrice));
+        DecimalFormat decimalFormat = new DecimalFormat("000000.000");
+        this.avggasprice = Double.valueOf(decimalFormat.format(avgGasPrice));
+        this.transactionscount = transactionsCount;
+        this.contracttransactionscount = contractTransactionsCount;
     }
 
     public Block(Long blockNumber, Double unclesReward) {
@@ -107,7 +107,6 @@ public class Block {
         Date date = new Date(ltimestamp);
         this.timestamp = simpleDateFormat.format(date);
 
-        this.totaltransactionscount = resultBlock.getTransactions().size();
         this.unclecount = resultBlock.getUncles().size();
     }
 
@@ -263,28 +262,20 @@ public class Block {
         this.timestamp = timestamp;
     }
 
-    public Integer getTransactionscount() {
+    public Long getTransactionscount() {
         return transactionscount;
     }
 
-    public void setTransactionscount(Integer transactionscount) {
+    public void setTransactionscount(Long transactionscount) {
         this.transactionscount = transactionscount;
     }
 
-    public Integer getContracttransactionscount() {
+    public Long getContracttransactionscount() {
         return contracttransactionscount;
     }
 
-    public void setContracttransactionscount(Integer contracttransactionscount) {
+    public void setContracttransactionscount(Long contracttransactionscount) {
         this.contracttransactionscount = contracttransactionscount;
-    }
-
-    public Integer getTotaltransactionscount() {
-        return totaltransactionscount;
-    }
-
-    public void setTotaltransactionscount(Integer totaltransactionscount) {
-        this.totaltransactionscount = totaltransactionscount;
     }
 
     public Integer getUnclecount() {

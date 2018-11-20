@@ -312,4 +312,7 @@
         <include refid="Return_Column_List"/>
         from block_uncle
     </select>
+    <select id="selectCountByAuthor" resultType="java.lang.Long">
+
+    </select>
 </mapper>
