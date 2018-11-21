@@ -57,9 +57,9 @@ public class TransactionsWithBLOBs extends Transactions {
     }
 
     public Author getAuthor() {
-        if (this.getBlockto() != null) {
+        if (!this.getBlockto().equals("null")) {
             return new Author(this.getBlockto(), 0);
-        } else if (this.getCreates() != null) {
+        } else if (!this.getCreates().equals("null")) {
             return new Author(this.getCreates(), 1);
         }
         return null;

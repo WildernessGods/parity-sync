@@ -4,7 +4,6 @@ import com.parity.paritysync.bean.Author;
 import com.parity.paritysync.bean.Block;
 import com.parity.paritysync.bean.BlockUncle;
 import com.parity.paritysync.bean.DailyTradingVolume;
-import com.parity.paritysync.bean.Transactions;
 import com.parity.paritysync.bean.TransactionsWithBLOBs;
 import com.parity.paritysync.returntype.ReturnTransactions;
 import com.parity.paritysync.service.AuthorService;
@@ -33,8 +32,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
-
-import static java.util.stream.Collectors.averagingDouble;
 
 @Service
 public class ParityUpdateUtil {
@@ -225,46 +222,72 @@ public class ParityUpdateUtil {
      */
     private void insertTransactions(List<ResultTransactions> resultTransactionsList, Long blockNumber, String timestamp, Integer unclecount) {
 
+        Long transactionsCount = 0L;
+        Long contractTransactionsCount = 0L;
+        Double totalGasPrice = 0.0;
+        Double blockReward = 0.0;
+
         if (resultTransactionsList != null && resultTransactionsList.size() > 0) {
 
-            List<TransactionsWithBLOBs> transactionsWithBLOBsList = resultTransactionsList.stream()
-                    .map(t -> t.getTransactionsWithBLOBs(utils, timestamp))
-                    .collect(Collectors.toList());
+            List<TransactionsWithBLOBs> insertTransactionsWithBLOBsList = new ArrayList<>();
+            List<Author> insertAuthorList = new ArrayList<>();
 
+            Map<String, Long> authorMap = new HashMap<>();
 
+            for (ResultTransactions resultTransactions : resultTransactionsList) {
 
-            transactionsService.batchInsertSelective(transactionsWithBLOBsList.stream()
-                    .filter(r -> transactionsService.selectByTxHash(r.getHash()) == null)
-                    .collect(Collectors.toList()));
+                TransactionsWithBLOBs transactionsWithBLOBs = resultTransactions.getTransactionsWithBLOBs(utils, timestamp);
+                if (transactionsService.selectByTxHash(transactionsWithBLOBs.getHash()) == null) {
+                    insertTransactionsWithBLOBsList.add(transactionsWithBLOBs);
+                }
 
-            authorService.batchInsertSelective(transactionsWithBLOBsList.stream().map(TransactionsWithBLOBs::getAuthor).distinct()
-                    .filter(author -> authorService.selectByAddress(author.getAddress()) == null).collect(Collectors.toList()));
+                Author author = resultTransactions.getAuthor();
+                if (!insertAuthorList.contains(author) && authorService.selectByAddress(author.getAddress()) == null) {
+                    insertAuthorList.add(author);
+                }
 
-            Map<String, Long> blockFromCount = transactionsWithBLOBsList.stream()
-                    .collect(Collectors.groupingBy(TransactionsWithBLOBs::getBlockfrom, Collectors.counting()));
+                if (authorMap.containsKey(resultTransactions.getFrom())) {
+                    authorMap.put(resultTransactions.getFrom(), authorMap.get(resultTransactions.getFrom()) + 1);
+                } else {
+                    authorMap.put(resultTransactions.getFrom(), 1L);
+                }
 
-            Map<String, Long> blockToCount = transactionsWithBLOBsList.stream().filter(t -> !t.getBlockto().equals("null"))
-                    .collect(Collectors.groupingBy(TransactionsWithBLOBs::getBlockto, Collectors.counting()));
+                resultTransactions.getTo().ifPresent(to -> {
+                    if (authorMap.containsKey(to)) {
+                        authorMap.put(to, authorMap.get(to) + 1);
+                    } else {
+                        authorMap.put(to, 1L);
+                    }
+                });
 
-            Map<String, Long> createsCount = transactionsWithBLOBsList.stream().filter(t -> !t.getCreates().equals("null"))
-                    .collect(Collectors.groupingBy(TransactionsWithBLOBs::getCreates, Collectors.counting()));
+                resultTransactions.getCreates().ifPresent(creates -> {
+                    if (authorMap.containsKey(creates)) {
+                        authorMap.put(creates, authorMap.get(creates) + 1);
+                    } else {
+                        authorMap.put(creates, 1L);
+                    }
+                });
 
-            Map<String, Long> updateMap = new HashMap<String, Long>() {{
-                putAll(blockFromCount);
-                putAll(blockToCount);
-                putAll(createsCount);
-            }};
+                if (resultTransactions.getTo().isPresent() && !resultTransactions.getCreates().isPresent()) {
+                    transactionsCount++;
+                }
 
-            updateMap.forEach(authorService::updateTransactionsCountByAddress);
+                if (!resultTransactions.getTo().isPresent() && resultTransactions.getCreates().isPresent()) {
+                    contractTransactionsCount++;
+                }
+                totalGasPrice += transactionsWithBLOBs.getGasprice();
+                blockReward += transactionsWithBLOBs.getFee();
 
-            blockService.updateByPrimaryKeySelective(new Block(blockNumber,
-                    transactionsWithBLOBsList.stream().filter(t -> !t.getBlockto().equals("null") && t.getCreates().equals("null")).count(),
-                    transactionsWithBLOBsList.stream().filter(t -> t.getBlockto().equals("null") && !t.getCreates().equals("null")).count(),
-                    transactionsWithBLOBsList.stream().collect(averagingDouble(TransactionsWithBLOBs::getGasprice)) * 1_000_000_000,
-                    transactionsWithBLOBsList.stream().mapToDouble(Transactions::getFee).sum(),
-                    unclecount
-            ));
+            }
+
+            transactionsService.batchInsertSelective(insertTransactionsWithBLOBsList);
+            authorService.batchInsertSelective(insertAuthorList);
+            authorMap.forEach(authorService::updateTransactionsCountByAddress);
         }
+
+        blockService.updateByPrimaryKeySelective(new Block(blockNumber, transactionsCount, contractTransactionsCount,
+                (resultTransactionsList != null && resultTransactionsList.size() > 0) ? totalGasPrice / resultTransactionsList.size() * 1_000_000_000 : 0,
+                blockReward, unclecount));
     }
 
     /**
@@ -318,7 +341,8 @@ public class ParityUpdateUtil {
 
             try {
                 ResultGetBlock resultGetUncleBlock = ParityRequest.eth_getUncleByBlockHashAndIndex(blockHash, uncles.indexOf(uncle));
-                resultGetUncleBlock.getResult().ifPresent(resultBlock -> blockUncleService.insertSelective(new BlockUncle(resultBlock, uncles.indexOf(uncle),
+                resultGetUncleBlock.getResult().ifPresent(resultBlock -> blockUncleService.insertSelective(new BlockUncle(resultBlock,
+                        uncles.indexOf(uncle),
                         blockHash, blockNumber, utils)));
             } catch (IOException e) {
                 logger.error("insertUncles = " + e.getMessage());

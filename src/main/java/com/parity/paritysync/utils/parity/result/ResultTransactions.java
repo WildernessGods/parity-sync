@@ -1,5 +1,6 @@
 package com.parity.paritysync.utils.parity.result;
 
+import com.parity.paritysync.bean.Author;
 import com.parity.paritysync.bean.TransactionsWithBLOBs;
 import com.parity.paritysync.utils.Utils;
 import com.parity.paritysync.utils.parity.ParityRequest;
@@ -225,6 +226,15 @@ public class ResultTransactions {
             return resultGetTransactionReceipt.getResult().map(result -> new TransactionsWithBLOBs(this, utils, result, timestamp)).orElse(null);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Author getAuthor() {
+        if (this.getTo().isPresent()) {
+            return new Author(this.getTo().get(), 0);
+        } else if (this.getCreates().isPresent()) {
+            return new Author(this.getCreates().get(), 1);
         }
         return null;
     }
