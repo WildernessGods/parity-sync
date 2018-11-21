@@ -434,4 +434,11 @@
         select count(*) from transactions
         where blockFrom = #{author, jdbcType=VARCHAR} or blockTo = #{author, jdbcType=VARCHAR} or creates = #{author, jdbcType=VARCHAR}
     </select>
+    <select id="selectForSearchByAuthor" resultType="com.parity.paritysync.returntype.ReturnTransactions">
+        select
+        <include refid="Return_Column_List"/>
+        from transactions
+        where blockFrom = #{author, jdbcType=VARCHAR} or blockTo = #{author, jdbcType=VARCHAR} or creates = #{author, jdbcType=VARCHAR}
+        limit 3
+    </select>
 </mapper>

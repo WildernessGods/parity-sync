@@ -41,5 +41,5 @@ public interface TransactionsMapper {
 
     int selectByCreatest_COUNT();
 
-
+    List<ReturnTransactions> selectForSearchByAuthor(String address);
 }

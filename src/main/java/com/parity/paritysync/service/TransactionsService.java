@@ -66,4 +66,8 @@ public class TransactionsService {
     public long selectCountByAuthor(String address) {
         return transactionsMapper.selectCountByAuthor(address);
     }
+
+    public List<ReturnTransactions> selectForSearchByAuthor(String address) {
+        return transactionsMapper.selectForSearchByAuthor(address);
+    }
 }
