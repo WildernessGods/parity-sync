@@ -277,7 +277,6 @@ public class ParityUpdateUtil {
                 }
                 totalGasPrice += transactionsWithBLOBs.getGasprice();
                 blockReward += transactionsWithBLOBs.getFee();
-
             }
 
             transactionsService.batchInsertSelective(insertTransactionsWithBLOBsList);

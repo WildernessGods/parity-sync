@@ -86,7 +86,7 @@
       balance, transactionsCount, blocks, 
       uncles)
     values (#{id,jdbcType=BIGINT}, #{address,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, 
-      #{balance,jdbcType=VARCHAR}, #{transactionscount,jdbcType=BIGINT}, #{blocks,jdbcType=BIGINT},
+      #{balance,jdbcType=DOUBLE}, #{transactionscount,jdbcType=BIGINT}, #{blocks,jdbcType=BIGINT},
       #{uncles,jdbcType=BIGINT})
   </insert>
     <insert id="insertSelective" parameterType="com.parity.paritysync.bean.Author">
@@ -125,7 +125,7 @@
                 #{type,jdbcType=INTEGER},
             </if>
             <if test="balance != null">
-                #{balance,jdbcType=VARCHAR},
+                #{balance,jdbcType=DOUBLE},
             </if>
             <if test="transactionscount != null">
                 #{transactionscount,jdbcType=BIGINT},
@@ -142,7 +142,7 @@
         insert into author (address, type, balance, transactionsCount, blocks, uncles)
         values
         <foreach collection="list" index="index" item="item" separator=",">
-            (#{item.address,jdbcType=VARCHAR}, #{item.type,jdbcType=INTEGER}, #{item.balance,jdbcType=VARCHAR},
+            (#{item.address,jdbcType=VARCHAR}, #{item.type,jdbcType=INTEGER}, #{item.balance,jdbcType=DOUBLE},
             #{item.transactionscount,jdbcType=BIGINT}, #{item.blocks,jdbcType=BIGINT}, #{item.uncles,jdbcType=BIGINT})
         </foreach>
     </insert>
@@ -156,7 +156,7 @@
                 type = #{type,jdbcType=INTEGER},
             </if>
             <if test="balance != null">
-                balance = #{balance,jdbcType=VARCHAR},
+                balance = #{balance,jdbcType=DOUBLE},
             </if>
             <if test="transactionscount != null">
                 transactionsCount = #{transactionscount,jdbcType=BIGINT},
@@ -174,7 +174,7 @@
     update author
     set address = #{address,jdbcType=VARCHAR},
       type = #{type,jdbcType=INTEGER},
-      balance = #{balance,jdbcType=VARCHAR},
+      balance = #{balance,jdbcType=DOUBLE},
       transactionsCount = #{transactionscount,jdbcType=BIGINT},
       blocks = #{blocks,jdbcType=BIGINT},
       uncles = #{uncles,jdbcType=BIGINT}

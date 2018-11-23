@@ -424,7 +424,9 @@
         select
         <include refid="ReturnContract_Column_List"/>
         from transactions
-        where id &lt;= (select id from transactions where creates != 'null' order by id desc limit #{index,jdbcType=BIGINT}, 1) and creates != 'null'
+        where id &lt;= (select id from transactions
+        where creates != 'null'
+        order by id desc limit #{index,jdbcType=BIGINT}, 1) and creates != 'null'
         order by id desc
     </select>
     <select id="selectByCreatest_COUNT" resultType="java.lang.Integer">
@@ -439,6 +441,6 @@
         <include refid="Return_Column_List"/>
         from transactions
         where blockFrom = #{author, jdbcType=VARCHAR} or blockTo = #{author, jdbcType=VARCHAR} or creates = #{author, jdbcType=VARCHAR}
-        limit 3
+        limit 10
     </select>
 </mapper>

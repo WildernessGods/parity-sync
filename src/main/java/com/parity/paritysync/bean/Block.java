@@ -109,7 +109,12 @@ public class Block {
         Date date = new Date(ltimestamp);
         this.timestamp = simpleDateFormat.format(date);
 
+        this.transactionscount = 0L;
+        this.contracttransactionscount = 0L;
         this.unclecount = resultBlock.getUncles().size();
+        this.avggasprice = 0.0;
+        this.blockreward = 0.0;
+        this.unclesreward = 0.0;
     }
 
     public Long getNumber() {

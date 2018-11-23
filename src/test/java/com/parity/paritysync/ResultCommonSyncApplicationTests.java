@@ -16,7 +16,7 @@ public class ResultCommonSyncApplicationTests {
 
     @Test
     public void insertParity() {
-        parityUpdateUtil.insertParity(2834812, 4_200_000);
+        parityUpdateUtil.insertParity(2898614, 4_200_000);
     }
 
     @Test

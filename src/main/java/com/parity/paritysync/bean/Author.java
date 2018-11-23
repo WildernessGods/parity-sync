@@ -8,13 +8,13 @@ public class Author {
 
     private Integer type;
 
-    private String balance;
+    private Double balance = 0.0;
 
-    private Long transactionscount;
+    private Long transactionscount = 0L;
 
-    private Long blocks;
+    private Long blocks = 0L;
 
-    private Long uncles;
+    private Long uncles = 0L;
 
     public Author() {
     }
@@ -22,9 +22,6 @@ public class Author {
     public Author(String address, Integer type) {
         this.address = address;
         this.type = type;
-        this.transactionscount = 0L;
-        this.blocks = 0L;
-        this.uncles = 0L;
     }
 
     public Author(String address, Long transactionscount) {
@@ -56,12 +53,12 @@ public class Author {
         this.type = type;
     }
 
-    public String getBalance() {
+    public Double getBalance() {
         return balance;
     }
 
-    public void setBalance(String balance) {
-        this.balance = balance == null ? null : balance.trim();
+    public void setBalance(Double balance) {
+        this.balance = balance;
     }
 
     public Long getTransactionscount() {
