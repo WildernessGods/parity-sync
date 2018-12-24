@@ -3,6 +3,7 @@ package com.parity.paritysync.dao;
 import com.parity.paritysync.bean.TransactionsWithBLOBs;
 import com.parity.paritysync.returntype.ReturnContractTransactions;
 import com.parity.paritysync.returntype.ReturnTransactions;
+import com.parity.paritysync.returntype.ReturnTransactionsRelationShip;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +16,7 @@ public interface TransactionsMapper {
 
     int insertSelective(TransactionsWithBLOBs record);
 
-    TransactionsWithBLOBs selectByPrimaryKey(Integer id);
+    TransactionsWithBLOBs selectByPrimaryKey(Long id);
 
     int batchInsertSelective(List<TransactionsWithBLOBs> transactionsWithBLOBsList);
 
@@ -31,15 +32,21 @@ public interface TransactionsMapper {
 
     long selectAll_COUNT();
 
-    List<ReturnTransactions> selectByAuthor(@Param("author") String author, @Param("index") Long index);
+    List<ReturnTransactions> selectByAuthor(@Param("address") String address, @Param("index") Long index);
 
     long selectCountByAuthor(String address);
 
-    long selectByAuthor_COUNT(String author);
+    long selectByAuthor_COUNT(String address);
 
     List<ReturnContractTransactions> selectByCreatest(Long index);
 
     int selectByCreatest_COUNT();
 
     List<ReturnTransactions> selectForSearchByAuthor(String address);
+
+    List<ReturnTransactionsRelationShip> selectByAuthorToRelationShip(String address);
+
+    List<ReturnTransactionsRelationShip> selectBlockFromByAddress(String address);
+
+    List<ReturnTransactionsRelationShip> selectBlockToByAddress(String address);
 }

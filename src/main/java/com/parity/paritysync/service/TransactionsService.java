@@ -4,6 +4,7 @@ import com.parity.paritysync.bean.TransactionsWithBLOBs;
 import com.parity.paritysync.dao.TransactionsMapper;
 import com.parity.paritysync.returntype.ReturnContractTransactions;
 import com.parity.paritysync.returntype.ReturnTransactions;
+import com.parity.paritysync.returntype.ReturnTransactionsRelationShip;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,10 @@ public class TransactionsService {
             return transactionsMapper.batchInsertSelective(transactionsWithBLOBsList);
         }
         return 0;
+    }
+
+    public TransactionsWithBLOBs selectByPrimaryKey(Long id) {
+        return transactionsMapper.selectByPrimaryKey(id);
     }
 
     public ReturnTransactions selectByTxHash(String hash) {
@@ -70,4 +75,17 @@ public class TransactionsService {
     public List<ReturnTransactions> selectForSearchByAuthor(String address) {
         return transactionsMapper.selectForSearchByAuthor(address);
     }
+
+    public List<ReturnTransactionsRelationShip> selectByAuthorToRelationShip(String address) {
+        return transactionsMapper.selectByAuthorToRelationShip(address);
+    }
+
+    public List<ReturnTransactionsRelationShip> selectBlockFromByAddress(String address) {
+        return transactionsMapper.selectBlockFromByAddress(address);
+    }
+
+    public List<ReturnTransactionsRelationShip> selectBlockToByAddress(String address) {
+        return transactionsMapper.selectBlockToByAddress(address);
+    }
+
 }

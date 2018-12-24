@@ -41,10 +41,13 @@
     <sql id="Return_Column_List">
         id, hash, status, blockNumber, timestamp, blockFrom, blockTo, creates, transactionValue, gas, gasUsed, gasPrice, fee, nonce, blockinput
     </sql>
+    <sql id="ReturnRelationShip_Column_List">
+       blockFrom, blockTo, creates, transactionValue
+    </sql>
     <sql id="ReturnContract_Column_List">
         id, hash, blockNumber, timestamp, blockFrom, creates, transactionValue
     </sql>
-    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
         select
         <include refid="Base_Column_List"/>
         ,
@@ -412,13 +415,13 @@
         from transactions
         where id &lt;=
         (select id From transactions
-        where blockFrom = #{author, jdbcType=VARCHAR} or blockTo = #{author, jdbcType=VARCHAR} or creates = #{author, jdbcType=VARCHAR}
+        where blockFrom = #{address, jdbcType=VARCHAR} or blockTo = #{address, jdbcType=VARCHAR} or creates = #{address, jdbcType=VARCHAR}
         order by id desc limit #{index,jdbcType=BIGINT}, 1)
-        and (blockFrom = #{author, jdbcType=VARCHAR} or blockTo = #{author, jdbcType=VARCHAR} or creates = #{author, jdbcType=VARCHAR})
+        and (blockFrom = #{address, jdbcType=VARCHAR} or blockTo = #{address, jdbcType=VARCHAR} or creates = #{address, jdbcType=VARCHAR})
         order by id desc
     </select>
     <select id="selectByAuthor_COUNT" resultType="java.lang.Long">
-        select transactionsCount from author where address = #{author, jdbcType=VARCHAR}
+        select transactionsCount from author where address = #{address, jdbcType=VARCHAR}
     </select>
     <select id="selectByCreatest" resultType="com.parity.paritysync.returntype.ReturnContractTransactions">
         select
@@ -434,13 +437,34 @@
     </select>
     <select id="selectCountByAuthor" resultType="java.lang.Long">
         select count(*) from transactions
-        where blockFrom = #{author, jdbcType=VARCHAR} or blockTo = #{author, jdbcType=VARCHAR} or creates = #{author, jdbcType=VARCHAR}
+        where blockFrom = #{address, jdbcType=VARCHAR} or blockTo = #{address, jdbcType=VARCHAR} or creates = #{address, jdbcType=VARCHAR}
     </select>
     <select id="selectForSearchByAuthor" resultType="com.parity.paritysync.returntype.ReturnTransactions">
         select
         <include refid="Return_Column_List"/>
         from transactions
-        where blockFrom = #{author, jdbcType=VARCHAR} or blockTo = #{author, jdbcType=VARCHAR} or creates = #{author, jdbcType=VARCHAR}
+        where blockFrom = #{address, jdbcType=VARCHAR} or blockTo = #{address, jdbcType=VARCHAR} or creates = #{address, jdbcType=VARCHAR}
         limit 10
+    </select>
+    <select id="selectByAuthorToRelationShip" resultType="com.parity.paritysync.returntype.ReturnTransactionsRelationShip">
+        select
+        <include refid="ReturnRelationShip_Column_List"/>
+        from transactions
+        where blockFrom = #{address, jdbcType=VARCHAR} or blockTo = #{address, jdbcType=VARCHAR} or creates = #{address, jdbcType=VARCHAR}
+        limit 500
+    </select>
+    <select id="selectBlockFromByAddress" resultType="com.parity.paritysync.returntype.ReturnTransactionsRelationShip">
+        select
+        <include refid="ReturnRelationShip_Column_List"/>
+        from transactions
+        where blockFrom = #{address, jdbcType=VARCHAR}
+        group by blockFrom
+    </select>
+    <select id="selectBlockToByAddress" resultType="com.parity.paritysync.returntype.ReturnTransactionsRelationShip">
+        select
+        <include refid="ReturnRelationShip_Column_List"/>
+        from transactions
+        where blockTo = #{address, jdbcType=VARCHAR}
+        group by blockTo
     </select>
 </mapper>

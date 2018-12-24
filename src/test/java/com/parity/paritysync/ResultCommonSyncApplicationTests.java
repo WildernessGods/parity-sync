@@ -16,7 +16,7 @@ public class ResultCommonSyncApplicationTests {
 
     @Test
     public void insertParity() {
-        parityUpdateUtil.insertParity(2898614, 4_200_000);
+        parityUpdateUtil.insertParity(32892553, 6_800_000);
     }
 
     @Test
@@ -37,5 +37,15 @@ public class ResultCommonSyncApplicationTests {
     @Test
     public void updateAuthor() {
         parityUpdateUtil.updateAuthor(1, 1000L);
+    }
+
+    @Test
+    public void updateAddress() {
+        parityUpdateUtil.updateAddress(2892564, 12892564);
+    }
+
+    @Test
+    public void searchAuthor() {
+        parityUpdateUtil.searchAddress(1, 3115379);
     }
 }

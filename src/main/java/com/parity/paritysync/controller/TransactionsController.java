@@ -4,14 +4,18 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.parity.paritysync.returntype.ReturnContractTransactions;
 import com.parity.paritysync.returntype.ReturnTransactions;
+import com.parity.paritysync.returntype.ReturnTransactionsRelationShip;
 import com.parity.paritysync.service.TransactionsService;
 import com.parity.paritysync.utils.ParityLog;
 import com.parity.paritysync.utils.ReturnMessage;
 import com.parity.paritysync.utils.parity.ParityUpdateUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -19,10 +23,14 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import static com.parity.paritysync.utils.ReturnMessage.OPERATE_SUCCESS;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.summingDouble;
 import static java.util.stream.Collectors.toList;
 
 @RestController
 public class TransactionsController {
+
+    private final Logger logger = LoggerFactory.getLogger(TransactionsController.class);
 
     private final TransactionsService transactionsService;
 
@@ -97,5 +105,23 @@ public class TransactionsController {
                         () -> new TreeMap<>(Comparator.reverseOrder()), toList()));
 
         return ReturnMessage.success(OPERATE_SUCCESS).add("transactions", returnTransactionsMapList).add("pages", pageInfo.getPages());
+    }
+
+    @ParityLog("查询地址间的交易关系")
+    @GetMapping("/transactions/relationship")
+    public ReturnMessage readRelationShip(@RequestParam("author") String author) {
+
+        List<ReturnTransactionsRelationShip> relationShipList = transactionsService.selectByAuthorToRelationShip(author);
+
+        List<ReturnTransactionsRelationShip> returnTransactionsRelationShipList = new ArrayList<>();
+        relationShipList.parallelStream().collect(groupingBy(ReturnTransactionsRelationShip::self, summingDouble(ReturnTransactionsRelationShip::getTransactionvalue)))
+                .forEach((key, value) -> {
+                    key.setTransactionvalue(value);
+                    returnTransactionsRelationShipList.add(key);
+                });
+
+        logger.info("size = " + returnTransactionsRelationShipList.size());
+
+        return ReturnMessage.success(OPERATE_SUCCESS).add("transactions", returnTransactionsRelationShipList);
     }
 }

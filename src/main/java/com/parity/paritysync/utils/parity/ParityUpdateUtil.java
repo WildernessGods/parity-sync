@@ -6,6 +6,7 @@ import com.parity.paritysync.bean.BlockUncle;
 import com.parity.paritysync.bean.DailyTradingVolume;
 import com.parity.paritysync.bean.TransactionsWithBLOBs;
 import com.parity.paritysync.returntype.ReturnTransactions;
+import com.parity.paritysync.returntype.ReturnTransactionsRelationShip;
 import com.parity.paritysync.service.AuthorService;
 import com.parity.paritysync.service.BlockService;
 import com.parity.paritysync.service.BlockUncleService;
@@ -387,7 +388,7 @@ public class ParityUpdateUtil {
     /**
      * 同步地址数据
      */
-    public void updateAuthor(long start, Long end) {
+    public void updateAuthor(long start, long end) {
 
         LongStream.rangeClosed(start, end).boxed().forEach(i -> {
 
@@ -458,5 +459,54 @@ public class ParityUpdateUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 同步地址
+     */
+    public void updateAddress(long start, long end) {
+
+        LongStream.rangeClosed(start, end).boxed().parallel().forEach(i -> {
+
+            TransactionsWithBLOBs transactionsWithBLOBs = transactionsService.selectByPrimaryKey(i);
+
+            Author authorOfBlockFrom = authorService.selectByAddress(transactionsWithBLOBs.getBlockfrom());
+            if (authorOfBlockFrom == null) {
+                logger.info(i + " blockfrom address = " + transactionsWithBLOBs.getBlockfrom());
+                authorService.insertSelective(new Author(transactionsWithBLOBs.getBlockfrom(), 0));
+            }
+
+            if (!"null".equals(transactionsWithBLOBs.getBlockto())) {
+                Author authorOfBlockTo = authorService.selectByAddress(transactionsWithBLOBs.getBlockto());
+                if (authorOfBlockTo == null) {
+                    logger.info(i + " blockto address = " + transactionsWithBLOBs.getBlockfrom());
+                    authorService.insertSelective(new Author(transactionsWithBLOBs.getBlockto(), 1));
+                }
+            }
+
+            if (!"null".equals(transactionsWithBLOBs.getCreates())) {
+                Author authorOfCreates = authorService.selectByAddress(transactionsWithBLOBs.getCreates());
+                if (authorOfCreates == null) {
+                    logger.info(i + " creates address = " + transactionsWithBLOBs.getBlockfrom());
+                    authorService.insertSelective(new Author(transactionsWithBLOBs.getCreates(), 1));
+                }
+            }
+        });
+    }
+
+    public void searchAddress(long start, long end) {
+
+        LongStream.rangeClosed(start, end).boxed().forEach(i -> {
+            Author author = authorService.selectByPrimaryKey(i);
+            if (author != null) {
+                List<ReturnTransactionsRelationShip> transactionsWithBLOBsForBlockFrom = transactionsService.selectBlockFromByAddress(author.getAddress());
+                List<ReturnTransactionsRelationShip> transactionsWithBLOBsForBlockTo = transactionsService.selectBlockToByAddress(author.getAddress());
+
+                logger.info("run " + i);
+                if (transactionsWithBLOBsForBlockFrom.size() > 3 && transactionsWithBLOBsForBlockTo.size() > 3) {
+                    logger.info(i + " address = " + author.getAddress() + " BlockFrom size = " + transactionsWithBLOBsForBlockFrom.size() + " BlockTo size = " + transactionsWithBLOBsForBlockTo.size());
+                }
+            }
+        });
     }
 }
