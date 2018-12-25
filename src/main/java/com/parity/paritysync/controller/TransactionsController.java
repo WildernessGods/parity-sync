@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -47,15 +49,14 @@ public class TransactionsController {
         PageHelper.startPage(0, 20);
         List<ReturnTransactions> returnTransactionsList = transactionsService.selectAll(pageNum * 20);
         PageInfo<ReturnTransactions> pageInfo = new PageInfo<>(returnTransactionsList);
-        parityUpdateUtil.getBlockConfirmationsCount(pageInfo.getList());
 
-        return ResponseEntity.ok(pageInfo);
+        return ResponseEntity.ok(Flux.just(pageInfo));
     }
 
     @ParityLog("根据交易哈希查询交易记录")
     @GetMapping("/transactions/hash")
     public ResponseEntity readByHash(@RequestParam("hash") String hash) {
-        return ResponseEntity.ok(transactionsService.selectByTxHash(hash));
+        return ResponseEntity.ok(Mono.justOrEmpty(transactionsService.selectByTxHash(hash)));
     }
 
     @ParityLog("根据区块哈希查询交易记录")
@@ -66,7 +67,7 @@ public class TransactionsController {
         List<ReturnTransactions> returnTransactionsList = transactionsService.selectByBlockHash(blockHash);
         PageInfo<ReturnTransactions> pageInfo = new PageInfo<>(returnTransactionsList);
 
-        return ResponseEntity.ok(pageInfo);
+        return ResponseEntity.ok(Flux.just(pageInfo));
     }
 
     @ParityLog("根据区块号查询交易记录")
@@ -77,7 +78,7 @@ public class TransactionsController {
         List<ReturnTransactions> returnTransactionsList = transactionsService.selectByBlockNumber(blockNumber);
         PageInfo<ReturnTransactions> pageInfo = new PageInfo<>(returnTransactionsList);
 
-        return ResponseEntity.ok(pageInfo);
+        return ResponseEntity.ok(Flux.just(pageInfo));
     }
 
     @ParityLog("根据地址查询交易记录")
@@ -88,7 +89,7 @@ public class TransactionsController {
         List<ReturnTransactions> returnTransactionsList = transactionsService.selectByAuthor(author, pageNum * 20);
         PageInfo<ReturnTransactions> pageInfo = new PageInfo<>(returnTransactionsList);
 
-        return ResponseEntity.ok(pageInfo);
+        return ResponseEntity.ok(Flux.just(pageInfo));
     }
 
     @ParityLog("分页查询合约内部交易")
@@ -103,7 +104,7 @@ public class TransactionsController {
                 pageInfo.getList().stream().collect(Collectors.groupingBy(ReturnContractTransactions::getBlocknumber,
                         () -> new TreeMap<>(Comparator.reverseOrder()), toList()));
 
-        return ResponseEntity.ok(returnTransactionsMapList);
+        return ResponseEntity.ok(Flux.just(returnTransactionsMapList));
     }
 
     @ParityLog("查询地址间的交易关系")
@@ -121,6 +122,6 @@ public class TransactionsController {
 
         logger.info("size = " + returnTransactionsRelationShipList.size());
 
-        return ResponseEntity.ok(returnTransactionsRelationShipList);
+        return ResponseEntity.ok(Flux.just(returnTransactionsRelationShipList));
     }
 }

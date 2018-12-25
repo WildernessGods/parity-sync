@@ -5,16 +5,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.HttpMediaTypeNotSupportedException;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.NoHandlerFoundException;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
-import static org.springframework.http.HttpStatus.UNSUPPORTED_MEDIA_TYPE;
 
 @RestControllerAdvice
 public class WebExceptionHandle {
@@ -31,35 +26,35 @@ public class WebExceptionHandle {
         return ResponseEntity.badRequest().build();
     }
 
-    /**
-     * 404 - Not Found
-     */
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(NoHandlerFoundException.class)
-    public ResponseEntity handleResourceNotFoundException(NoHandlerFoundException e) {
-        logger.error("接口不存在", e);
-        return ResponseEntity.notFound().build();
-    }
-
-    /**
-     * 405 - Method Not Allowed
-     */
-    @ResponseStatus(METHOD_NOT_ALLOWED)
-    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
-        logger.error("不支持当前请求方法", e);
-        return ResponseEntity.status(METHOD_NOT_ALLOWED).build();
-    }
-
-    /**
-     * 415 - Unsupported Media Type
-     */
-    @ResponseStatus(UNSUPPORTED_MEDIA_TYPE)
-    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
-    public ResponseEntity handleHttpMediaTypeNotSupportedException(Exception e) {
-        logger.error("不支持当前媒体类型", e);
-        return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).build();
-    }
+//    /**
+//     * 404 - Not Found
+//     */
+//    @ResponseStatus(HttpStatus.NOT_FOUND)
+//    @ExceptionHandler(NoHandlerFoundException.class)
+//    public ResponseEntity handleResourceNotFoundException(NoHandlerFoundException e) {
+//        logger.error("接口不存在", e);
+//        return ResponseEntity.notFound().build();
+//    }
+//
+//    /**
+//     * 405 - Method Not Allowed
+//     */
+//    @ResponseStatus(METHOD_NOT_ALLOWED)
+//    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+//    public ResponseEntity handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
+//        logger.error("不支持当前请求方法", e);
+//        return ResponseEntity.status(METHOD_NOT_ALLOWED).build();
+//    }
+//
+//    /**
+//     * 415 - Unsupported Media Type
+//     */
+//    @ResponseStatus(UNSUPPORTED_MEDIA_TYPE)
+//    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+//    public ResponseEntity handleHttpMediaTypeNotSupportedException(Exception e) {
+//        logger.error("不支持当前媒体类型", e);
+//        return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).build();
+//    }
 
     /**
      * 500 - Internal Server Error

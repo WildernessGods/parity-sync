@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 import java.util.List;
@@ -53,12 +54,12 @@ public class SearchController {
         ReturnTransactions returnTransactions = transactionsService.selectByTxHash(search);
 
         Block finalBlock = block;
-        return ResponseEntity.ok(new HashMap<String, Object>() {
+        return ResponseEntity.ok(Mono.justOrEmpty(new HashMap<String, Object>() {
             {
                 put("AddressTransactions", addressTransactions);
                 put("Block", finalBlock);
                 put("Transactions", returnTransactions);
             }
-        });
+        }));
     }
 }

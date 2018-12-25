@@ -1,28 +1,35 @@
 Manifest-Version: 1.0
-Class-Path: tomcat-embed-core-8.5.34.jar logback-core-1.2.3.jar spring
- -jdbc-5.0.10.RELEASE.jar mybatis-spring-1.3.2.jar spring-webmvc-5.0.1
- 0.RELEASE.jar snakeyaml-1.19.jar HikariCP-2.7.9.jar jul-to-slf4j-1.7.
- 25.jar spring-beans-5.0.10.RELEASE.jar tomcat-embed-el-8.5.34.jar dru
- id-1.1.10.jar spring-context-5.0.10.RELEASE.jar spring-aop-5.0.10.REL
- EASE.jar spring-core-5.0.10.RELEASE.jar mybatis-3.4.6.jar spring-boot
- -starter-aop-2.0.6.RELEASE.jar pagehelper-spring-boot-autoconfigure-1
- .2.9.jar jackson-core-2.9.7.jar mybatis-spring-boot-autoconfigure-1.3
- .2.jar spring-expression-5.0.10.RELEASE.jar jackson-module-parameter-
- names-2.9.7.jar mybatis-generator-core-1.3.5.jar hibernate-validator-
- 6.0.13.Final.jar spring-web-5.0.10.RELEASE.jar slf4j-api-1.7.25.jar j
- boss-logging-3.3.2.Final.jar pagehelper-5.1.7.jar mysql-connector-jav
- a-5.1.47.jar spring-boot-starter-jdbc-2.0.6.RELEASE.jar spring-boot-2
- .0.6.RELEASE.jar spring-tx-5.0.10.RELEASE.jar spring-boot-starter-jso
- n-2.0.6.RELEASE.jar mybatis-spring-boot-starter-1.3.2.jar jsqlparser-
- 1.2.jar druid-spring-boot-starter-1.1.10.jar log4j-api-2.10.0.jar spr
- ing-boot-starter-2.0.6.RELEASE.jar validation-api-2.0.1.Final.jar cla
- ssmate-1.3.4.jar jackson-annotations-2.9.0.jar spring-boot-starter-we
- b-2.0.6.RELEASE.jar jackson-datatype-jdk8-2.9.7.jar aspectjweaver-1.8
- .13.jar spring-boot-starter-tomcat-2.0.6.RELEASE.jar jackson-databind
- -2.9.7.jar log4j-to-slf4j-2.10.0.jar spring-boot-autoconfigure-2.0.6.
- RELEASE.jar tomcat-embed-websocket-8.5.34.jar logback-classic-1.2.3.j
- ar spring-jcl-5.0.10.RELEASE.jar jackson-datatype-jsr310-2.9.7.jar ja
- vax.annotation-api-1.3.2.jar pagehelper-spring-boot-starter-1.2.9.jar
-  spring-boot-starter-logging-2.0.6.RELEASE.jar
+Class-Path: spring-boot-starter-jdbc-2.0.6.RELEASE.jar spring-aop-5.0.
+ 10.RELEASE.jar snakeyaml-1.19.jar spring-boot-starter-json-2.0.6.RELE
+ ASE.jar druid-1.1.10.jar javax.annotation-api-1.3.2.jar jboss-logging
+ -3.3.2.Final.jar HikariCP-2.7.9.jar mysql-connector-java-5.1.47.jar n
+ etty-transport-native-epoll-4.1.29.Final-linux-x86_64.jar log4j-api-2
+ .10.0.jar spring-tx-5.0.10.RELEASE.jar spring-boot-2.0.6.RELEASE.jar 
+ spring-web-5.0.10.RELEASE.jar log4j-to-slf4j-2.10.0.jar nio-multipart
+ -parser-1.1.0.jar netty-handler-4.1.29.Final.jar jsqlparser-1.2.jar s
+ pring-expression-5.0.10.RELEASE.jar netty-codec-http-4.1.29.Final.jar
+  jackson-datatype-jsr310-2.9.7.jar druid-spring-boot-starter-1.1.10.j
+ ar netty-codec-4.1.29.Final.jar netty-buffer-4.1.29.Final.jar netty-c
+ ommon-4.1.29.Final.jar mybatis-spring-boot-autoconfigure-1.3.2.jar ni
+ o-stream-storage-1.1.3.jar spring-core-5.0.10.RELEASE.jar netty-trans
+ port-4.1.29.Final.jar netty-resolver-4.1.29.Final.jar spring-jdbc-5.0
+ .10.RELEASE.jar jackson-module-parameter-names-2.9.7.jar netty-handle
+ r-proxy-4.1.29.Final.jar spring-jcl-5.0.10.RELEASE.jar mybatis-spring
+ -1.3.2.jar spring-beans-5.0.10.RELEASE.jar reactor-netty-0.7.10.RELEA
+ SE.jar logback-classic-1.2.3.jar spring-boot-starter-reactor-netty-2.
+ 0.6.RELEASE.jar pagehelper-spring-boot-starter-1.2.9.jar mybatis-spri
+ ng-boot-starter-1.3.2.jar reactor-core-3.1.10.RELEASE.jar mybatis-3.4
+ .6.jar pagehelper-5.1.7.jar jackson-datatype-jdk8-2.9.7.jar aspectjwe
+ aver-1.8.13.jar spring-webflux-5.0.10.RELEASE.jar classmate-1.3.4.jar
+  reactive-streams-1.0.2.jar spring-context-5.0.10.RELEASE.jar jackson
+ -core-2.9.7.jar jackson-databind-2.9.7.jar hibernate-validator-6.0.13
+ .Final.jar spring-boot-starter-aop-2.0.6.RELEASE.jar netty-transport-
+ native-unix-common-4.1.29.Final.jar logback-core-1.2.3.jar spring-boo
+ t-autoconfigure-2.0.6.RELEASE.jar mybatis-generator-core-1.3.5.jar ja
+ ckson-annotations-2.9.0.jar spring-boot-starter-logging-2.0.6.RELEASE
+ .jar spring-boot-starter-2.0.6.RELEASE.jar jul-to-slf4j-1.7.25.jar sp
+ ring-boot-starter-webflux-2.0.6.RELEASE.jar validation-api-2.0.1.Fina
+ l.jar netty-codec-socks-4.1.29.Final.jar pagehelper-spring-boot-autoc
+ onfigure-1.2.9.jar slf4j-api-1.7.25.jar
 Main-Class: com.parity.paritysync.ParitySyncApplication
 

@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -28,19 +30,19 @@ public class BlockController {
         PageHelper.startPage(0, 20);
         List<ReturnBlock> blockList = blockService.selectAll(pageNum * 20);
         PageInfo<ReturnBlock> pageInfo = new PageInfo<>(blockList);
-        return ResponseEntity.ok(pageInfo);
+        return ResponseEntity.ok(Flux.just(pageInfo));
     }
 
     @ParityLog("根据区块号查询区块数据")
     @GetMapping("/block/blockNumber")
     public ResponseEntity readByBlockNumber(@RequestParam("blockNumber") Long blockNumber) {
-        return ResponseEntity.ok(blockService.selectByPrimaryKey(blockNumber));
+        return ResponseEntity.ok(Mono.justOrEmpty(blockService.selectByPrimaryKey(blockNumber)));
     }
 
     @ParityLog("根据区块哈希查询区块数据")
     @GetMapping("/block/blockHash")
     public ResponseEntity readByBlockHash(@RequestParam("blockHash") String blockHash) {
-        return ResponseEntity.ok(blockService.selectByHash(blockHash));
+        return ResponseEntity.ok(Mono.justOrEmpty(blockService.selectByHash(blockHash)));
     }
 
     @ParityLog("根据地址查询区块数据")
@@ -50,6 +52,6 @@ public class BlockController {
         PageHelper.startPage(pageNum, 20);
         List<ReturnBlock> blockList = blockService.selectByAuthor(author);
         PageInfo<ReturnBlock> pageInfo = new PageInfo<>(blockList);
-        return ResponseEntity.ok(pageInfo);
+        return ResponseEntity.ok(Flux.just(pageInfo));
     }
 }

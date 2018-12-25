@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 
 /**
@@ -26,12 +25,6 @@ public class AspectParityLog {
     private Logger logger = LoggerFactory.getLogger(AspectParityLog.class);
 
     private long before = 0;
-
-    private final HttpServletRequest request;
-
-    public AspectParityLog(HttpServletRequest request) {
-        this.request = request;
-    }
 
     @Pointcut("execution(* com.parity.paritysync.controller.*.*(..))")
     public void methodPointcut() {
