@@ -7,7 +7,7 @@ import com.parity.paritysync.service.AuthorService;
 import com.parity.paritysync.service.BlockService;
 import com.parity.paritysync.service.TransactionsService;
 import com.parity.paritysync.utils.ParityLog;
-import com.parity.paritysync.utils.ReturnMessage;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,7 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import static com.parity.paritysync.utils.Utils.NUMBER_PATTERN;
 
 @RestController
 public class SearchController {
@@ -35,7 +36,7 @@ public class SearchController {
 
     @ParityLog("检索地址，交易哈希，区块编号")
     @GetMapping("/search")
-    public ReturnMessage search(@RequestParam("search") String search) {
+    public ResponseEntity search(@RequestParam("search") String search) {
 
         Author author = authorService.selectByAddress(search);
         Map<String, List<ReturnTransactions>> addressTransactions = new HashMap<>();
@@ -43,18 +44,21 @@ public class SearchController {
             addressTransactions.put(search, transactionsService.selectForSearchByAuthor(author.getAddress()));
         }
 
-        Pattern pattern = Pattern.compile("^[0-9]*$");
-        Matcher matcher = pattern.matcher(search);
-        Block block = null;
+        Matcher matcher = NUMBER_PATTERN.matcher(search);
+        Block block = new Block();
         if (matcher.matches()) {
             block = blockService.selectByPrimaryKey(Long.valueOf(search));
         }
 
         ReturnTransactions returnTransactions = transactionsService.selectByTxHash(search);
 
-        return ReturnMessage.success(ReturnMessage.OPERATE_SUCCESS)
-                .add("AddressTransactions", addressTransactions)
-                .add("Block", block)
-                .add("Transactions", returnTransactions);
+        Block finalBlock = block;
+        return ResponseEntity.ok(new HashMap<String, Object>() {
+            {
+                put("AddressTransactions", addressTransactions);
+                put("Block", finalBlock);
+                put("Transactions", returnTransactions);
+            }
+        });
     }
 }

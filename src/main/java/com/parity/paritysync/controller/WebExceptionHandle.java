@@ -1,10 +1,9 @@
 package com.parity.paritysync.controller;
 
-import com.parity.paritysync.utils.ErrorMessage;
-import com.parity.paritysync.utils.ReturnMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -12,6 +11,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
+
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
+import static org.springframework.http.HttpStatus.UNSUPPORTED_MEDIA_TYPE;
 
 @RestControllerAdvice
 public class WebExceptionHandle {
@@ -23,9 +26,9 @@ public class WebExceptionHandle {
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ReturnMessage handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+    public ResponseEntity handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         logger.error("参数解析失败", e);
-        return ReturnMessage.fail(ErrorMessage.Bad_Request);
+        return ResponseEntity.badRequest().build();
     }
 
     /**
@@ -33,40 +36,40 @@ public class WebExceptionHandle {
      */
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoHandlerFoundException.class)
-    public ReturnMessage handleResourceNotFoundException(NoHandlerFoundException e) {
+    public ResponseEntity handleResourceNotFoundException(NoHandlerFoundException e) {
         logger.error("接口不存在", e);
-        return ReturnMessage.fail(ErrorMessage.NOT_FOUND);
+        return ResponseEntity.notFound().build();
     }
 
     /**
      * 405 - Method Not Allowed
      */
-    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    @ResponseStatus(METHOD_NOT_ALLOWED)
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ReturnMessage handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
+    public ResponseEntity handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         logger.error("不支持当前请求方法", e);
-        return ReturnMessage.fail(ErrorMessage.Method_Not_Allowed);
+        return ResponseEntity.status(METHOD_NOT_ALLOWED).build();
     }
 
     /**
      * 415 - Unsupported Media Type
      */
-    @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+    @ResponseStatus(UNSUPPORTED_MEDIA_TYPE)
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
-    public ReturnMessage handleHttpMediaTypeNotSupportedException(Exception e) {
+    public ResponseEntity handleHttpMediaTypeNotSupportedException(Exception e) {
         logger.error("不支持当前媒体类型", e);
-        return ReturnMessage.fail(ErrorMessage.Unsupported_Media_Type);
+        return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).build();
     }
 
     /**
      * 500 - Internal Server Error
      */
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-    public ReturnMessage handleException(Exception e) {
+    public ResponseEntity handleException(Exception e) {
 
         logger.error("服务运行异常", e);
         e.printStackTrace();
-        return ReturnMessage.fail(ErrorMessage.Internal_Server_Error);
+        return ResponseEntity.status(INTERNAL_SERVER_ERROR).build();
     }
 }

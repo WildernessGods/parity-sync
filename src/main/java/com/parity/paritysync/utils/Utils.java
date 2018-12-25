@@ -3,9 +3,12 @@ package com.parity.paritysync.utils;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.regex.Pattern;
 
 @Component
 public class Utils {
+
+    public final static Pattern NUMBER_PATTERN = Pattern.compile("[0-9]+");
 
     /**
      * 十六进制字符串转double

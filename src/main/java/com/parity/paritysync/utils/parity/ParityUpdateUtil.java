@@ -470,25 +470,27 @@ public class ParityUpdateUtil {
 
             TransactionsWithBLOBs transactionsWithBLOBs = transactionsService.selectByPrimaryKey(i);
 
-            Author authorOfBlockFrom = authorService.selectByAddress(transactionsWithBLOBs.getBlockfrom());
-            if (authorOfBlockFrom == null) {
-                logger.info(i + " blockfrom address = " + transactionsWithBLOBs.getBlockfrom());
-                authorService.insertSelective(new Author(transactionsWithBLOBs.getBlockfrom(), 0));
-            }
-
-            if (!"null".equals(transactionsWithBLOBs.getBlockto())) {
-                Author authorOfBlockTo = authorService.selectByAddress(transactionsWithBLOBs.getBlockto());
-                if (authorOfBlockTo == null) {
-                    logger.info(i + " blockto address = " + transactionsWithBLOBs.getBlockfrom());
-                    authorService.insertSelective(new Author(transactionsWithBLOBs.getBlockto(), 1));
+            if (transactionsWithBLOBs != null) {
+                Author authorOfBlockFrom = authorService.selectByAddress(transactionsWithBLOBs.getBlockfrom());
+                if (authorOfBlockFrom == null) {
+                    logger.info(i + " blockfrom address = " + transactionsWithBLOBs.getBlockfrom());
+                    authorService.insertSelective(new Author(transactionsWithBLOBs.getBlockfrom(), 0));
                 }
-            }
 
-            if (!"null".equals(transactionsWithBLOBs.getCreates())) {
-                Author authorOfCreates = authorService.selectByAddress(transactionsWithBLOBs.getCreates());
-                if (authorOfCreates == null) {
-                    logger.info(i + " creates address = " + transactionsWithBLOBs.getBlockfrom());
-                    authorService.insertSelective(new Author(transactionsWithBLOBs.getCreates(), 1));
+                if (!"null".equals(transactionsWithBLOBs.getBlockto())) {
+                    Author authorOfBlockTo = authorService.selectByAddress(transactionsWithBLOBs.getBlockto());
+                    if (authorOfBlockTo == null) {
+                        logger.info(i + " blockto address = " + transactionsWithBLOBs.getBlockfrom());
+                        authorService.insertSelective(new Author(transactionsWithBLOBs.getBlockto(), 1));
+                    }
+                }
+
+                if (!"null".equals(transactionsWithBLOBs.getCreates())) {
+                    Author authorOfCreates = authorService.selectByAddress(transactionsWithBLOBs.getCreates());
+                    if (authorOfCreates == null) {
+                        logger.info(i + " creates address = " + transactionsWithBLOBs.getBlockfrom());
+                        authorService.insertSelective(new Author(transactionsWithBLOBs.getCreates(), 1));
+                    }
                 }
             }
         });
@@ -503,7 +505,7 @@ public class ParityUpdateUtil {
                 List<ReturnTransactionsRelationShip> transactionsWithBLOBsForBlockTo = transactionsService.selectBlockToByAddress(author.getAddress());
 
                 logger.info("run " + i);
-                if (transactionsWithBLOBsForBlockFrom.size() > 3 && transactionsWithBLOBsForBlockTo.size() > 3) {
+                if (transactionsWithBLOBsForBlockFrom.size() >= 3 && transactionsWithBLOBsForBlockTo.size() >= 3) {
                     logger.info(i + " address = " + author.getAddress() + " BlockFrom size = " + transactionsWithBLOBsForBlockFrom.size() + " BlockTo size = " + transactionsWithBLOBsForBlockTo.size());
                 }
             }

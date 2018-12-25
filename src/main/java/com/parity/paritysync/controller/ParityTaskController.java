@@ -1,7 +1,7 @@
 package com.parity.paritysync.controller;
 
 import com.parity.paritysync.service.ParityTaskService;
-import com.parity.paritysync.utils.ReturnMessage;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,7 +15,7 @@ public class ParityTaskController {
     }
 
     @GetMapping("/task")
-    public ReturnMessage task() {
+    public ResponseEntity task() {
 
 //        int start = 1000000;
 //        int count = 100000;
@@ -23,6 +23,6 @@ public class ParityTaskController {
 //        for (int i = 0; i < 10; i++) {
 //            parityTaskService.asyncUpdateParity(start + i * count, start + (i + 1) * count);
 //        }
-        return ReturnMessage.success(ReturnMessage.OPERATE_SUCCESS);
+        return ResponseEntity.ok().build();
     }
 }

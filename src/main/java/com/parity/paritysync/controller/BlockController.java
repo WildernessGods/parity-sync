@@ -2,18 +2,15 @@ package com.parity.paritysync.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.parity.paritysync.bean.Block;
 import com.parity.paritysync.returntype.ReturnBlock;
 import com.parity.paritysync.service.BlockService;
 import com.parity.paritysync.utils.ParityLog;
-import com.parity.paritysync.utils.ReturnMessage;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-
-import static com.parity.paritysync.utils.ReturnMessage.OPERATE_SUCCESS;
 
 @RestController
 public class BlockController {
@@ -26,33 +23,33 @@ public class BlockController {
 
     @ParityLog("分页查询所有区块数据")
     @GetMapping("/block")
-    public ReturnMessage read(@RequestParam("pageNum") Long pageNum) {
+    public ResponseEntity read(@RequestParam("pageNum") Long pageNum) {
 
         PageHelper.startPage(0, 20);
         List<ReturnBlock> blockList = blockService.selectAll(pageNum * 20);
         PageInfo<ReturnBlock> pageInfo = new PageInfo<>(blockList);
-        return ReturnMessage.success(OPERATE_SUCCESS).add("block", pageInfo);
+        return ResponseEntity.ok(pageInfo);
     }
 
     @ParityLog("根据区块号查询区块数据")
     @GetMapping("/block/blockNumber")
-    public ReturnMessage readByBlockNumber(@RequestParam("blockNumber") Long blockNumber) {
-        return ReturnMessage.success(OPERATE_SUCCESS).add("block", blockService.selectByPrimaryKey(blockNumber));
+    public ResponseEntity readByBlockNumber(@RequestParam("blockNumber") Long blockNumber) {
+        return ResponseEntity.ok(blockService.selectByPrimaryKey(blockNumber));
     }
 
     @ParityLog("根据区块哈希查询区块数据")
     @GetMapping("/block/blockHash")
-    public ReturnMessage readByBlockHash(@RequestParam("blockHash") String blockHash) {
-        return ReturnMessage.success(OPERATE_SUCCESS).add("block", blockService.selectByHash(blockHash));
+    public ResponseEntity readByBlockHash(@RequestParam("blockHash") String blockHash) {
+        return ResponseEntity.ok(blockService.selectByHash(blockHash));
     }
 
     @ParityLog("根据地址查询区块数据")
     @GetMapping("/block/author")
-    public ReturnMessage readByBlockAuthor(@RequestParam("pageNum") Integer pageNum, @RequestParam("author") String author) {
+    public ResponseEntity readByBlockAuthor(@RequestParam("pageNum") Integer pageNum, @RequestParam("author") String author) {
 
         PageHelper.startPage(pageNum, 20);
         List<ReturnBlock> blockList = blockService.selectByAuthor(author);
         PageInfo<ReturnBlock> pageInfo = new PageInfo<>(blockList);
-        return ReturnMessage.success(OPERATE_SUCCESS).add("block", pageInfo);
+        return ResponseEntity.ok(pageInfo);
     }
 }
