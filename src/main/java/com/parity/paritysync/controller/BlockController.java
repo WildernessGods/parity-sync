@@ -30,7 +30,7 @@ public class BlockController {
         PageHelper.startPage(0, 20);
         List<ReturnBlock> blockList = blockService.selectAll(pageNum * 20);
         PageInfo<ReturnBlock> pageInfo = new PageInfo<>(blockList);
-        return ResponseEntity.ok(Flux.just(pageInfo));
+        return ResponseEntity.ok(Mono.justOrEmpty(pageInfo));
     }
 
     @ParityLog("根据区块号查询区块数据")
@@ -52,6 +52,6 @@ public class BlockController {
         PageHelper.startPage(pageNum, 20);
         List<ReturnBlock> blockList = blockService.selectByAuthor(author);
         PageInfo<ReturnBlock> pageInfo = new PageInfo<>(blockList);
-        return ResponseEntity.ok(Flux.just(pageInfo));
+        return ResponseEntity.ok(Mono.justOrEmpty(pageInfo));
     }
 }

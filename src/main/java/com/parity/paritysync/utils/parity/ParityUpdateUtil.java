@@ -466,8 +466,9 @@ public class ParityUpdateUtil {
      */
     public void updateAddress(long start, long end) {
 
-        LongStream.rangeClosed(start, end).boxed().parallel().forEach(i -> {
+        LongStream.rangeClosed(start, end).boxed().forEach(i -> {
 
+            logger.info("run " + i);
             TransactionsWithBLOBs transactionsWithBLOBs = transactionsService.selectByPrimaryKey(i);
 
             if (transactionsWithBLOBs != null) {

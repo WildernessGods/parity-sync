@@ -6,6 +6,10 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import reactor.core.publisher.Flux;
+
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -41,7 +45,7 @@ public class ResultCommonSyncApplicationTests {
 
     @Test
     public void updateAddress() {
-        parityUpdateUtil.updateAddress(2892564, 12892564);
+        parityUpdateUtil.updateAddress(30959879, 32892564);
     }
 
     @Test

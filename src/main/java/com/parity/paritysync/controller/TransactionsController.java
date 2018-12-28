@@ -50,7 +50,7 @@ public class TransactionsController {
         List<ReturnTransactions> returnTransactionsList = transactionsService.selectAll(pageNum * 20);
         PageInfo<ReturnTransactions> pageInfo = new PageInfo<>(returnTransactionsList);
 
-        return ResponseEntity.ok(Flux.just(pageInfo));
+        return ResponseEntity.ok(Mono.justOrEmpty(pageInfo));
     }
 
     @ParityLog("根据交易哈希查询交易记录")
@@ -67,7 +67,7 @@ public class TransactionsController {
         List<ReturnTransactions> returnTransactionsList = transactionsService.selectByBlockHash(blockHash);
         PageInfo<ReturnTransactions> pageInfo = new PageInfo<>(returnTransactionsList);
 
-        return ResponseEntity.ok(Flux.just(pageInfo));
+        return ResponseEntity.ok(Mono.justOrEmpty(pageInfo));
     }
 
     @ParityLog("根据区块号查询交易记录")
@@ -78,7 +78,7 @@ public class TransactionsController {
         List<ReturnTransactions> returnTransactionsList = transactionsService.selectByBlockNumber(blockNumber);
         PageInfo<ReturnTransactions> pageInfo = new PageInfo<>(returnTransactionsList);
 
-        return ResponseEntity.ok(Flux.just(pageInfo));
+        return ResponseEntity.ok(Mono.justOrEmpty(pageInfo));
     }
 
     @ParityLog("根据地址查询交易记录")
@@ -89,7 +89,7 @@ public class TransactionsController {
         List<ReturnTransactions> returnTransactionsList = transactionsService.selectByAuthor(author, pageNum * 20);
         PageInfo<ReturnTransactions> pageInfo = new PageInfo<>(returnTransactionsList);
 
-        return ResponseEntity.ok(Flux.just(pageInfo));
+        return ResponseEntity.ok(Mono.justOrEmpty(pageInfo));
     }
 
     @ParityLog("分页查询合约内部交易")
@@ -122,6 +122,6 @@ public class TransactionsController {
 
         logger.info("size = " + returnTransactionsRelationShipList.size());
 
-        return ResponseEntity.ok(Flux.just(returnTransactionsRelationShipList));
+        return ResponseEntity.ok(Flux.fromIterable(returnTransactionsRelationShipList));
     }
 }

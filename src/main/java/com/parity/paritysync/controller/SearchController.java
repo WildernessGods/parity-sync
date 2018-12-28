@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,9 +41,9 @@ public class SearchController {
     public ResponseEntity search(@RequestParam("search") String search) {
 
         Author author = authorService.selectByAddress(search);
-        Map<String, List<ReturnTransactions>> addressTransactions = new HashMap<>();
+        List<ReturnTransactions> returnTransactionsList = new ArrayList<>();
         if (author != null) {
-            addressTransactions.put(search, transactionsService.selectForSearchByAuthor(author.getAddress()));
+            returnTransactionsList = transactionsService.selectForSearchByAuthor(author.getAddress());
         }
 
         Matcher matcher = NUMBER_PATTERN.matcher(search);
@@ -53,13 +54,11 @@ public class SearchController {
 
         ReturnTransactions returnTransactions = transactionsService.selectByTxHash(search);
 
-        Block finalBlock = block;
-        return ResponseEntity.ok(Mono.justOrEmpty(new HashMap<String, Object>() {
-            {
-                put("AddressTransactions", addressTransactions);
-                put("Block", finalBlock);
-                put("Transactions", returnTransactions);
-            }
-        }));
+        Map<String, Object> returnMap = new HashMap<>();
+        returnMap.put("AddressTransactions", returnTransactionsList);
+        returnMap.put("Block", block);
+        returnMap.put("Transactions", returnTransactions);
+
+        return ResponseEntity.ok(Mono.justOrEmpty(returnMap));
     }
 }

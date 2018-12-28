@@ -17,11 +17,10 @@ public class CorsConfig implements WebFluxConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
 
         registry
-                .addMapping("/")
+                .addMapping("/**")
                 .allowedOrigins("*")
                 .allowedMethods("*")
                 .allowedHeaders("*")
-//                .exposedHeaders("header1", "header2")
                 .allowCredentials(true).maxAge(3600);
     }
 }
