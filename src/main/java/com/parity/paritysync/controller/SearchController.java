@@ -1,8 +1,6 @@
 package com.parity.paritysync.controller;
 
 import com.parity.paritysync.bean.Author;
-import com.parity.paritysync.bean.Block;
-import com.parity.paritysync.returntype.ReturnTransactions;
 import com.parity.paritysync.service.AuthorService;
 import com.parity.paritysync.service.BlockService;
 import com.parity.paritysync.service.TransactionsService;
@@ -13,11 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 
 import static com.parity.paritysync.utils.Utils.NUMBER_PATTERN;
 
@@ -40,24 +35,25 @@ public class SearchController {
     @GetMapping("/search")
     public ResponseEntity search(@RequestParam("search") String search) {
 
-        Author author = authorService.selectByAddress(search);
-        List<ReturnTransactions> returnTransactionsList = new ArrayList<>();
-        if (author != null) {
-            returnTransactionsList = transactionsService.selectForSearchByAuthor(author.getAddress());
-        }
+        Map<String, Object> returnMap = new HashMap<String, Object>() {
+            {
+                put("AddressTransactions", null);
+                put("Block", null);
+                put("Transactions", null);
+            }
+        };
 
-        Matcher matcher = NUMBER_PATTERN.matcher(search);
-        Block block = new Block();
-        if (matcher.matches()) {
-            block = blockService.selectByPrimaryKey(Long.valueOf(search));
-        }
-
-        ReturnTransactions returnTransactions = transactionsService.selectByTxHash(search);
-
-        Map<String, Object> returnMap = new HashMap<>();
-        returnMap.put("AddressTransactions", returnTransactionsList);
-        returnMap.put("Block", block);
-        returnMap.put("Transactions", returnTransactions);
+        Mono.just(search).doOnNext(s -> {
+            Author author = authorService.selectByAddress(s);
+            if (author != null) {
+                returnMap.put("AddressTransactions", transactionsService.selectForSearchByAuthor(author.getAddress()));
+            }
+        }).doOnNext(s -> {
+            if (NUMBER_PATTERN.matcher(s).matches()) {
+                returnMap.put("Block", blockService.selectByPrimaryKey(Long.valueOf(s)));
+            }
+        }).doOnNext(s -> returnMap.put("Transactions", transactionsService.selectByTxHash(s)))
+                .subscribe();
 
         return ResponseEntity.ok(Mono.justOrEmpty(returnMap));
     }

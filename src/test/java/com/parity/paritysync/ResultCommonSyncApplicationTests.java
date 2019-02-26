@@ -1,15 +1,13 @@
 package com.parity.paritysync;
 
+import com.parity.paritysync.dao.BlockMapper;
+import com.parity.paritysync.service.BlockService;
 import com.parity.paritysync.utils.parity.ParityUpdateUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import reactor.core.publisher.Flux;
-
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -18,9 +16,12 @@ public class ResultCommonSyncApplicationTests {
     @Autowired
     private ParityUpdateUtil parityUpdateUtil;
 
+    @Autowired
+    BlockMapper blockMapper;
+
     @Test
     public void insertParity() {
-        parityUpdateUtil.insertParity(32892553, 6_800_000);
+        parityUpdateUtil.insertParity(3934066, 6_800_000);
     }
 
     @Test
@@ -45,11 +46,11 @@ public class ResultCommonSyncApplicationTests {
 
     @Test
     public void updateAddress() {
-        parityUpdateUtil.updateAddress(30959879, 32892564);
+        parityUpdateUtil.updateAddress(1, 33589681);
     }
 
     @Test
-    public void searchAuthor() {
-        parityUpdateUtil.searchAddress(1, 3115379);
+    public void updateTransactions2() {
+        parityUpdateUtil.updateTransactions2(20901400, 33589681);
     }
 }

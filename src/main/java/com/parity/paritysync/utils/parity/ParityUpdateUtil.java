@@ -4,15 +4,16 @@ import com.parity.paritysync.bean.Author;
 import com.parity.paritysync.bean.Block;
 import com.parity.paritysync.bean.BlockUncle;
 import com.parity.paritysync.bean.DailyTradingVolume;
+import com.parity.paritysync.bean.Transactions2WithBLOBs;
 import com.parity.paritysync.bean.TransactionsWithBLOBs;
 import com.parity.paritysync.returntype.ReturnTransactions;
-import com.parity.paritysync.returntype.ReturnTransactionsRelationShip;
 import com.parity.paritysync.service.AuthorService;
 import com.parity.paritysync.service.BlockService;
 import com.parity.paritysync.service.BlockUncleService;
 import com.parity.paritysync.service.DailyTradingVolumeService;
 import com.parity.paritysync.service.ReceiptLogsService;
 import com.parity.paritysync.service.TransactionReceiptService;
+import com.parity.paritysync.service.Transactions2Service;
 import com.parity.paritysync.service.TransactionsService;
 import com.parity.paritysync.utils.Utils;
 import com.parity.paritysync.utils.parity.result.ResultBlock;
@@ -49,20 +50,23 @@ public class ParityUpdateUtil {
 
     private final TransactionsService transactionsService;
 
+    private final Transactions2Service transactions2Service;
+
     private final TransactionReceiptService transactionReceiptService;
 
     private final ReceiptLogsService receiptLogsService;
 
     private final Utils utils;
 
-    public ParityUpdateUtil(AuthorService authorService, BlockService blockService, BlockUncleService blockUncleService,
-                            DailyTradingVolumeService dailyTradingVolumeService, TransactionsService transactionsService,
-                            TransactionReceiptService transactionReceiptService, ReceiptLogsService receiptLogsService, Utils utils) {
+    public ParityUpdateUtil(AuthorService authorService, BlockService blockService, BlockUncleService blockUncleService, DailyTradingVolumeService dailyTradingVolumeService,
+                            TransactionsService transactionsService, Transactions2Service transactions2Service, TransactionReceiptService transactionReceiptService,
+                            ReceiptLogsService receiptLogsService, Utils utils) {
         this.authorService = authorService;
         this.blockService = blockService;
         this.blockUncleService = blockUncleService;
         this.dailyTradingVolumeService = dailyTradingVolumeService;
         this.transactionsService = transactionsService;
+        this.transactions2Service = transactions2Service;
         this.transactionReceiptService = transactionReceiptService;
         this.receiptLogsService = receiptLogsService;
         this.utils = utils;
@@ -325,7 +329,6 @@ public class ParityUpdateUtil {
         });
     }
 
-
     /**
      * 插入叔块
      *
@@ -466,7 +469,7 @@ public class ParityUpdateUtil {
      */
     public void updateAddress(long start, long end) {
 
-        LongStream.rangeClosed(start, end).boxed().forEach(i -> {
+        LongStream.rangeClosed(start, end).parallel().boxed().forEach(i -> {
 
             logger.info("run " + i);
             TransactionsWithBLOBs transactionsWithBLOBs = transactionsService.selectByPrimaryKey(i);
@@ -497,17 +500,54 @@ public class ParityUpdateUtil {
         });
     }
 
-    public void searchAddress(long start, long end) {
+    /**
+     * 同步交易记录2
+     */
+    public void updateTransactions2(long start, long end) {
 
         LongStream.rangeClosed(start, end).boxed().forEach(i -> {
-            Author author = authorService.selectByPrimaryKey(i);
-            if (author != null) {
-                List<ReturnTransactionsRelationShip> transactionsWithBLOBsForBlockFrom = transactionsService.selectBlockFromByAddress(author.getAddress());
-                List<ReturnTransactionsRelationShip> transactionsWithBLOBsForBlockTo = transactionsService.selectBlockToByAddress(author.getAddress());
 
-                logger.info("run " + i);
-                if (transactionsWithBLOBsForBlockFrom.size() >= 3 && transactionsWithBLOBsForBlockTo.size() >= 3) {
-                    logger.info(i + " address = " + author.getAddress() + " BlockFrom size = " + transactionsWithBLOBsForBlockFrom.size() + " BlockTo size = " + transactionsWithBLOBsForBlockTo.size());
+            logger.info("run " + i);
+            TransactionsWithBLOBs transactionsWithBLOBs = transactionsService.selectByPrimaryKey(i);
+
+            if (transactionsWithBLOBs != null) {
+
+                Long blockFromId;
+                Long blockToId = 0L;
+                Long blockCreatesId = 0L;
+
+                Author authorOfBlockFrom = authorService.selectByAddress(transactionsWithBLOBs.getBlockfrom());
+                if (authorOfBlockFrom == null) {
+                    logger.info(i + " blockfrom address = " + transactionsWithBLOBs.getBlockfrom());
+                    blockFromId = authorService.insertSelective(new Author(transactionsWithBLOBs.getBlockfrom(), 0));
+                } else {
+                    blockFromId = authorOfBlockFrom.getId();
+                }
+
+                if (!"null".equals(transactionsWithBLOBs.getBlockto())) {
+                    Author authorOfBlockTo = authorService.selectByAddress(transactionsWithBLOBs.getBlockto());
+                    if (authorOfBlockTo == null) {
+                        logger.info(i + " blockto address = " + transactionsWithBLOBs.getBlockfrom());
+                        blockToId = authorService.insertSelective(new Author(transactionsWithBLOBs.getBlockto(), 1));
+                    } else {
+                        blockToId = authorOfBlockTo.getId();
+                    }
+                }
+
+                if (!"null".equals(transactionsWithBLOBs.getCreates())) {
+                    Author authorOfCreates = authorService.selectByAddress(transactionsWithBLOBs.getCreates());
+                    if (authorOfCreates == null) {
+                        logger.info(i + " creates address = " + transactionsWithBLOBs.getBlockfrom());
+                        blockCreatesId = authorService.insertSelective(new Author(transactionsWithBLOBs.getCreates(), 1));
+                    } else {
+                        blockCreatesId = authorOfCreates.getId();
+                    }
+                }
+
+                Transactions2WithBLOBs transactions2WithBLOBs = transactions2Service.selectByPrimaryKey(i);
+                if (transactions2WithBLOBs == null) {
+                    logger.info("run insertSelective " + i);
+                    transactions2Service.insertSelective(new Transactions2WithBLOBs(transactionsWithBLOBs, blockFromId, blockToId, blockCreatesId));
                 }
             }
         });

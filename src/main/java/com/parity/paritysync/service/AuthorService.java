@@ -27,7 +27,7 @@ public class AuthorService {
         return authorMapper.selectByPrimaryKey(id);
     }
 
-    public int insertSelective(Author author) {
+    public long insertSelective(Author author) {
         return authorMapper.insertSelective(author);
     }
 

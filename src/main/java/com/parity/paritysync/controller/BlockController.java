@@ -27,8 +27,8 @@ public class BlockController {
     @GetMapping("/block")
     public ResponseEntity read(@RequestParam("pageNum") Long pageNum) {
 
-        PageHelper.startPage(0, 20);
-        List<ReturnBlock> blockList = blockService.selectAll(pageNum * 20);
+        PageHelper.startPage(0, 5);
+        List<ReturnBlock> blockList = blockService.selectAll(pageNum * 5);
         PageInfo<ReturnBlock> pageInfo = new PageInfo<>(blockList);
         return ResponseEntity.ok(Mono.justOrEmpty(pageInfo));
     }

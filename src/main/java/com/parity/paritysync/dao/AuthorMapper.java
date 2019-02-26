@@ -13,7 +13,7 @@ public interface AuthorMapper {
 
     int insert(Author record);
 
-    int insertSelective(Author record);
+    long insertSelective(Author record);
 
     Author selectByPrimaryKey(Long id);
 

@@ -451,20 +451,18 @@
         <include refid="ReturnRelationShip_Column_List"/>
         from transactions
         where blockFrom = #{address, jdbcType=VARCHAR} or blockTo = #{address, jdbcType=VARCHAR} or creates = #{address, jdbcType=VARCHAR}
-        limit 500
+        limit 100
     </select>
     <select id="selectBlockFromByAddress" resultType="com.parity.paritysync.returntype.ReturnTransactionsRelationShip">
         select
         <include refid="ReturnRelationShip_Column_List"/>
         from transactions
         where blockFrom = #{address, jdbcType=VARCHAR}
-        group by blockFrom
     </select>
     <select id="selectBlockToByAddress" resultType="com.parity.paritysync.returntype.ReturnTransactionsRelationShip">
         select
         <include refid="ReturnRelationShip_Column_List"/>
         from transactions
         where blockTo = #{address, jdbcType=VARCHAR}
-        group by blockTo
     </select>
 </mapper>

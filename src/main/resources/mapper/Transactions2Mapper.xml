@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.parity.paritysync.dao.Transactions2Mapper">
+  <resultMap id="BaseResultMap" type="com.parity.paritysync.bean.Transactions2">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="blockHash" jdbcType="VARCHAR" property="blockhash" />
+    <result column="blockNumber" jdbcType="BIGINT" property="blocknumber" />
+    <result column="blockFrom" jdbcType="BIGINT" property="blockfrom" />
+    <result column="hash" jdbcType="VARCHAR" property="hash" />
+    <result column="gas" jdbcType="BIGINT" property="gas" />
+    <result column="gasUsed" jdbcType="BIGINT" property="gasused" />
+    <result column="gasPrice" jdbcType="DOUBLE" property="gasprice" />
+    <result column="fee" jdbcType="DOUBLE" property="fee" />
+    <result column="transactionValue" jdbcType="DOUBLE" property="transactionvalue" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="blockTo" jdbcType="BIGINT" property="blockto" />
+    <result column="creates" jdbcType="BIGINT" property="creates" />
+    <result column="timestamp" jdbcType="VARCHAR" property="timestamp" />
+    <result column="transactionIndex" jdbcType="VARCHAR" property="transactionindex" />
+    <result column="nonce" jdbcType="VARCHAR" property="nonce" />
+    <result column="v" jdbcType="VARCHAR" property="v" />
+    <result column="r" jdbcType="VARCHAR" property="r" />
+    <result column="s" jdbcType="VARCHAR" property="s" />
+    <result column="chainId" jdbcType="VARCHAR" property="chainid" />
+    <result column="blockCondition" jdbcType="VARCHAR" property="blockcondition" />
+    <result column="publicKey" jdbcType="VARCHAR" property="publickey" />
+    <result column="standardV" jdbcType="VARCHAR" property="standardv" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.parity.paritysync.bean.Transactions2WithBLOBs">
+    <result column="raw" jdbcType="LONGVARCHAR" property="raw" />
+    <result column="blockInput" jdbcType="LONGVARCHAR" property="blockinput" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, blockHash, blockNumber, blockFrom, hash, gas, gasUsed, gasPrice, fee, transactionValue, 
+    status, blockTo, creates, timestamp, transactionIndex, nonce, v, r, s, chainId, blockCondition, 
+    publicKey, standardV
+  </sql>
+  <sql id="Blob_Column_List">
+    raw, blockInput
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from transactions2
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from transactions2
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.parity.paritysync.bean.Transactions2WithBLOBs">
+    insert into transactions2 (id, blockHash, blockNumber, 
+      blockFrom, hash, gas, 
+      gasUsed, gasPrice, fee, 
+      transactionValue, status, blockTo, 
+      creates, timestamp, transactionIndex, 
+      nonce, v, r, s, 
+      chainId, blockCondition, publicKey, 
+      standardV, raw, blockInput
+      )
+    values (#{id,jdbcType=BIGINT}, #{blockhash,jdbcType=VARCHAR}, #{blocknumber,jdbcType=BIGINT}, 
+      #{blockfrom,jdbcType=BIGINT}, #{hash,jdbcType=VARCHAR}, #{gas,jdbcType=BIGINT}, 
+      #{gasused,jdbcType=BIGINT}, #{gasprice,jdbcType=DOUBLE}, #{fee,jdbcType=DOUBLE}, 
+      #{transactionvalue,jdbcType=DOUBLE}, #{status,jdbcType=INTEGER}, #{blockto,jdbcType=BIGINT}, 
+      #{creates,jdbcType=BIGINT}, #{timestamp,jdbcType=VARCHAR}, #{transactionindex,jdbcType=VARCHAR},
+      #{nonce,jdbcType=VARCHAR}, #{v,jdbcType=VARCHAR}, #{r,jdbcType=VARCHAR}, #{s,jdbcType=VARCHAR}, 
+      #{chainid,jdbcType=VARCHAR}, #{blockcondition,jdbcType=VARCHAR}, #{publickey,jdbcType=VARCHAR}, 
+      #{standardv,jdbcType=VARCHAR}, #{raw,jdbcType=LONGVARCHAR}, #{blockinput,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.parity.paritysync.bean.Transactions2WithBLOBs">
+    insert into transactions2
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="blockhash != null">
+        blockHash,
+      </if>
+      <if test="blocknumber != null">
+        blockNumber,
+      </if>
+      <if test="blockfrom != null">
+        blockFrom,
+      </if>
+      <if test="hash != null">
+        hash,
+      </if>
+      <if test="gas != null">
+        gas,
+      </if>
+      <if test="gasused != null">
+        gasUsed,
+      </if>
+      <if test="gasprice != null">
+        gasPrice,
+      </if>
+      <if test="fee != null">
+        fee,
+      </if>
+      <if test="transactionvalue != null">
+        transactionValue,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="blockto != null">
+        blockTo,
+      </if>
+      <if test="creates != null">
+        creates,
+      </if>
+      <if test="timestamp != null">
+        timestamp,
+      </if>
+      <if test="transactionindex != null">
+        transactionIndex,
+      </if>
+      <if test="nonce != null">
+        nonce,
+      </if>
+      <if test="v != null">
+        v,
+      </if>
+      <if test="r != null">
+        r,
+      </if>
+      <if test="s != null">
+        s,
+      </if>
+      <if test="chainid != null">
+        chainId,
+      </if>
+      <if test="blockcondition != null">
+        blockCondition,
+      </if>
+      <if test="publickey != null">
+        publicKey,
+      </if>
+      <if test="standardv != null">
+        standardV,
+      </if>
+      <if test="raw != null">
+        raw,
+      </if>
+      <if test="blockinput != null">
+        blockInput,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="blockhash != null">
+        #{blockhash,jdbcType=VARCHAR},
+      </if>
+      <if test="blocknumber != null">
+        #{blocknumber,jdbcType=BIGINT},
+      </if>
+      <if test="blockfrom != null">
+        #{blockfrom,jdbcType=BIGINT},
+      </if>
+      <if test="hash != null">
+        #{hash,jdbcType=VARCHAR},
+      </if>
+      <if test="gas != null">
+        #{gas,jdbcType=BIGINT},
+      </if>
+      <if test="gasused != null">
+        #{gasused,jdbcType=BIGINT},
+      </if>
+      <if test="gasprice != null">
+        #{gasprice,jdbcType=DOUBLE},
+      </if>
+      <if test="fee != null">
+        #{fee,jdbcType=DOUBLE},
+      </if>
+      <if test="transactionvalue != null">
+        #{transactionvalue,jdbcType=DOUBLE},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="blockto != null">
+        #{blockto,jdbcType=BIGINT},
+      </if>
+      <if test="creates != null">
+        #{creates,jdbcType=BIGINT},
+      </if>
+      <if test="timestamp != null">
+        #{timestamp,jdbcType=VARCHAR},
+      </if>
+      <if test="transactionindex != null">
+        #{transactionindex,jdbcType=VARCHAR},
+      </if>
+      <if test="nonce != null">
+        #{nonce,jdbcType=VARCHAR},
+      </if>
+      <if test="v != null">
+        #{v,jdbcType=VARCHAR},
+      </if>
+      <if test="r != null">
+        #{r,jdbcType=VARCHAR},
+      </if>
+      <if test="s != null">
+        #{s,jdbcType=VARCHAR},
+      </if>
+      <if test="chainid != null">
+        #{chainid,jdbcType=VARCHAR},
+      </if>
+      <if test="blockcondition != null">
+        #{blockcondition,jdbcType=VARCHAR},
+      </if>
+      <if test="publickey != null">
+        #{publickey,jdbcType=VARCHAR},
+      </if>
+      <if test="standardv != null">
+        #{standardv,jdbcType=VARCHAR},
+      </if>
+      <if test="raw != null">
+        #{raw,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="blockinput != null">
+        #{blockinput,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.parity.paritysync.bean.Transactions2WithBLOBs">
+    update transactions2
+    <set>
+      <if test="blockhash != null">
+        blockHash = #{blockhash,jdbcType=VARCHAR},
+      </if>
+      <if test="blocknumber != null">
+        blockNumber = #{blocknumber,jdbcType=BIGINT},
+      </if>
+      <if test="blockfrom != null">
+        blockFrom = #{blockfrom,jdbcType=BIGINT},
+      </if>
+      <if test="hash != null">
+        hash = #{hash,jdbcType=VARCHAR},
+      </if>
+      <if test="gas != null">
+        gas = #{gas,jdbcType=BIGINT},
+      </if>
+      <if test="gasused != null">
+        gasUsed = #{gasused,jdbcType=BIGINT},
+      </if>
+      <if test="gasprice != null">
+        gasPrice = #{gasprice,jdbcType=DOUBLE},
+      </if>
+      <if test="fee != null">
+        fee = #{fee,jdbcType=DOUBLE},
+      </if>
+      <if test="transactionvalue != null">
+        transactionValue = #{transactionvalue,jdbcType=DOUBLE},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="blockto != null">
+        blockTo = #{blockto,jdbcType=BIGINT},
+      </if>
+      <if test="creates != null">
+        creates = #{creates,jdbcType=BIGINT},
+      </if>
+      <if test="timestamp != null">
+        timestamp = #{timestamp,jdbcType=VARCHAR},
+      </if>
+      <if test="transactionindex != null">
+        transactionIndex = #{transactionindex,jdbcType=VARCHAR},
+      </if>
+      <if test="nonce != null">
+        nonce = #{nonce,jdbcType=VARCHAR},
+      </if>
+      <if test="v != null">
+        v = #{v,jdbcType=VARCHAR},
+      </if>
+      <if test="r != null">
+        r = #{r,jdbcType=VARCHAR},
+      </if>
+      <if test="s != null">
+        s = #{s,jdbcType=VARCHAR},
+      </if>
+      <if test="chainid != null">
+        chainId = #{chainid,jdbcType=VARCHAR},
+      </if>
+      <if test="blockcondition != null">
+        blockCondition = #{blockcondition,jdbcType=VARCHAR},
+      </if>
+      <if test="publickey != null">
+        publicKey = #{publickey,jdbcType=VARCHAR},
+      </if>
+      <if test="standardv != null">
+        standardV = #{standardv,jdbcType=VARCHAR},
+      </if>
+      <if test="raw != null">
+        raw = #{raw,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="blockinput != null">
+        blockInput = #{blockinput,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.parity.paritysync.bean.Transactions2WithBLOBs">
+    update transactions2
+    set blockHash = #{blockhash,jdbcType=VARCHAR},
+      blockNumber = #{blocknumber,jdbcType=BIGINT},
+      blockFrom = #{blockfrom,jdbcType=BIGINT},
+      hash = #{hash,jdbcType=VARCHAR},
+      gas = #{gas,jdbcType=BIGINT},
+      gasUsed = #{gasused,jdbcType=BIGINT},
+      gasPrice = #{gasprice,jdbcType=DOUBLE},
+      fee = #{fee,jdbcType=DOUBLE},
+      transactionValue = #{transactionvalue,jdbcType=DOUBLE},
+      status = #{status,jdbcType=INTEGER},
+      blockTo = #{blockto,jdbcType=BIGINT},
+      creates = #{creates,jdbcType=BIGINT},
+      timestamp = #{timestamp,jdbcType=VARCHAR},
+      transactionIndex = #{transactionindex,jdbcType=VARCHAR},
+      nonce = #{nonce,jdbcType=VARCHAR},
+      v = #{v,jdbcType=VARCHAR},
+      r = #{r,jdbcType=VARCHAR},
+      s = #{s,jdbcType=VARCHAR},
+      chainId = #{chainid,jdbcType=VARCHAR},
+      blockCondition = #{blockcondition,jdbcType=VARCHAR},
+      publicKey = #{publickey,jdbcType=VARCHAR},
+      standardV = #{standardv,jdbcType=VARCHAR},
+      raw = #{raw,jdbcType=LONGVARCHAR},
+      blockInput = #{blockinput,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.parity.paritysync.bean.Transactions2">
+    update transactions2
+    set blockHash = #{blockhash,jdbcType=VARCHAR},
+      blockNumber = #{blocknumber,jdbcType=BIGINT},
+      blockFrom = #{blockfrom,jdbcType=BIGINT},
+      hash = #{hash,jdbcType=VARCHAR},
+      gas = #{gas,jdbcType=BIGINT},
+      gasUsed = #{gasused,jdbcType=BIGINT},
+      gasPrice = #{gasprice,jdbcType=DOUBLE},
+      fee = #{fee,jdbcType=DOUBLE},
+      transactionValue = #{transactionvalue,jdbcType=DOUBLE},
+      status = #{status,jdbcType=INTEGER},
+      blockTo = #{blockto,jdbcType=BIGINT},
+      creates = #{creates,jdbcType=BIGINT},
+      timestamp = #{timestamp,jdbcType=VARCHAR},
+      transactionIndex = #{transactionindex,jdbcType=VARCHAR},
+      nonce = #{nonce,jdbcType=VARCHAR},
+      v = #{v,jdbcType=VARCHAR},
+      r = #{r,jdbcType=VARCHAR},
+      s = #{s,jdbcType=VARCHAR},
+      chainId = #{chainid,jdbcType=VARCHAR},
+      blockCondition = #{blockcondition,jdbcType=VARCHAR},
+      publicKey = #{publickey,jdbcType=VARCHAR},
+      standardV = #{standardv,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
