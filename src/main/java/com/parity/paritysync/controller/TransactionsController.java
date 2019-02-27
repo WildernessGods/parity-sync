@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.WebSession;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -109,7 +110,7 @@ public class TransactionsController {
 
     @ParityLog("查询地址间的交易关系")
     @GetMapping("/transactions/relationship")
-    public ResponseEntity readRelationShip(@RequestParam("author") String author) {
+    public ResponseEntity readRelationShip(@RequestParam("author") String author, WebSession webSession) {
 
         List<ReturnTransactionsRelationShip> relationShipList = transactionsService.selectByAuthorToRelationShip(author);
 
@@ -120,7 +121,7 @@ public class TransactionsController {
                     returnTransactionsRelationShipList.add(key);
                 });
 
-        logger.info("size = " + returnTransactionsRelationShipList.size());
+        logger.info("webSession " + webSession.getId() + "size = " + returnTransactionsRelationShipList.size());
 
         return ResponseEntity.ok(Flux.fromIterable(returnTransactionsRelationShipList));
     }

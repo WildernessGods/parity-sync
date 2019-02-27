@@ -51,6 +51,6 @@ public class ResultCommonSyncApplicationTests {
 
     @Test
     public void updateTransactions2() {
-        parityUpdateUtil.updateTransactions2(20901400, 33589681);
+        parityUpdateUtil.updateTransactions2(23720480, 33589681);
     }
 }
