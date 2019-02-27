@@ -1,7 +1,6 @@
 package com.parity.paritysync;
 
 import com.parity.paritysync.dao.BlockMapper;
-import com.parity.paritysync.service.BlockService;
 import com.parity.paritysync.utils.parity.ParityUpdateUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
