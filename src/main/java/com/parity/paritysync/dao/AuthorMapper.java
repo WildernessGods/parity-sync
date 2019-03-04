@@ -9,25 +9,25 @@ import java.util.List;
 @Component
 public interface AuthorMapper {
 
-    int deleteByPrimaryKey(Long id);
+    Integer deleteByPrimaryKey(Long id);
 
-    int insert(Author record);
+    Integer insert(Author record);
 
-    long insertSelective(Author record);
+    Long insertSelective(Author record);
 
     Author selectByPrimaryKey(Long id);
 
-    int updateByPrimaryKeySelective(Author record);
+    Integer updateByPrimaryKeySelective(Author record);
 
-    int updateByPrimaryKey(Author record);
+    Integer updateByPrimaryKey(Author record);
 
     Author selectByAddress(String address);
 
-    int updateSelectiveByAddress(Author author);
+    Integer updateSelectiveByAddress(Author author);
 
-    int updateTransactionsCountByAddress(@Param("address") String address, @Param("transactionscount") Long transactionscount);
+    Integer updateTransactionsCountByAddress(@Param("address") String address, @Param("transactionscount") Long transactionscount);
 
     List<Author> selectAll();
 
-    int batchInsertSelective(List<Author> authorList);
+    Integer batchInsertSelective(List<Author> authorList);
 }

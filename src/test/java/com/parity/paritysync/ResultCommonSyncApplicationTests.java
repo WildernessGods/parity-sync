@@ -15,9 +15,6 @@ public class ResultCommonSyncApplicationTests {
     @Autowired
     private ParityUpdateUtil parityUpdateUtil;
 
-    @Autowired
-    BlockMapper blockMapper;
-
     @Test
     public void insertParity() {
         parityUpdateUtil.insertParity(3934066, 6_800_000);
@@ -50,6 +47,6 @@ public class ResultCommonSyncApplicationTests {
 
     @Test
     public void updateTransactions2() {
-        parityUpdateUtil.updateTransactions2(23720480, 33589681);
+        parityUpdateUtil.updateTransactions2(25313560, 33589681);
     }
 }

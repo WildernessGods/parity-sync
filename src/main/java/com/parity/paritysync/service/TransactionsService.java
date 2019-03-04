@@ -7,6 +7,7 @@ import com.parity.paritysync.returntype.ReturnTransactions;
 import com.parity.paritysync.returntype.ReturnTransactionsRelationShip;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,11 +26,11 @@ public class TransactionsService {
         this.transactionsMapper = transactionsMapper;
     }
 
-    public int insertSelective(TransactionsWithBLOBs transactions) {
+    public Integer insertSelective(TransactionsWithBLOBs transactions) {
         return transactionsMapper.insertSelective(transactions);
     }
 
-    public int batchInsertSelective(List<TransactionsWithBLOBs> transactionsWithBLOBsList) {
+    public Integer batchInsertSelective(List<TransactionsWithBLOBs> transactionsWithBLOBsList) {
         if (transactionsWithBLOBsList != null && transactionsWithBLOBsList.size() > 0) {
             logger.info("insert transactions size = " + transactionsWithBLOBsList.size());
             return transactionsMapper.batchInsertSelective(transactionsWithBLOBsList);
@@ -69,7 +70,7 @@ public class TransactionsService {
         return transactionsMapper.selectByCreatest(index);
     }
 
-    public long selectCountByAuthor(String address) {
+    public Long selectCountByAuthor(String address) {
         return transactionsMapper.selectCountByAuthor(address);
     }
 
@@ -77,7 +78,7 @@ public class TransactionsService {
         return transactionsMapper.selectForSearchByAuthor(address);
     }
 
-    @Cacheable(value = "selectByAuthorToRelationShip", key = "#root.args")
+    @Cacheable(value = "TransactionsSelectByAuthorToRelationShip", key = "#root.args")
     public List<ReturnTransactionsRelationShip> selectByAuthorToRelationShip(String address) {
         return transactionsMapper.selectByAuthorToRelationShip(address);
     }

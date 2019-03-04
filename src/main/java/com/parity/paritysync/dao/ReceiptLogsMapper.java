@@ -8,13 +8,13 @@ import java.util.List;
 @Component
 public interface ReceiptLogsMapper {
 
-    int insert(ReceiptLogs record);
+    Integer insert(ReceiptLogs record);
 
-    int insertSelective(ReceiptLogs record);
+    Integer insertSelective(ReceiptLogs record);
 
-    int updateByPrimaryKeySelective(ReceiptLogs record);
+    Integer updateByPrimaryKeySelective(ReceiptLogs record);
 
-    int updateByPrimaryKey(ReceiptLogs record);
+    Integer updateByPrimaryKey(ReceiptLogs record);
 
-    int batchInsert(List<ReceiptLogs> receiptLogsList);
+    Integer batchInsert(List<ReceiptLogs> receiptLogsList);
 }

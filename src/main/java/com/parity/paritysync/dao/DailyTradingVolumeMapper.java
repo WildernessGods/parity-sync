@@ -6,17 +6,17 @@ import org.springframework.stereotype.Component;
 @Component
 public interface DailyTradingVolumeMapper {
 
-    int deleteByPrimaryKey(Integer id);
+    Integer deleteByPrimaryKey(Integer id);
 
-    int insert(DailyTradingVolume record);
+    Integer insert(DailyTradingVolume record);
 
-    int insertSelective(DailyTradingVolume record);
+    Integer insertSelective(DailyTradingVolume record);
 
     DailyTradingVolume selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(DailyTradingVolume record);
+    Integer updateByPrimaryKeySelective(DailyTradingVolume record);
 
-    int updateByPrimaryKey(DailyTradingVolume record);
+    Integer updateByPrimaryKey(DailyTradingVolume record);
 
     DailyTradingVolume selectByDate(String transactionDate);
 }

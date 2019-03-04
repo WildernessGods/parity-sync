@@ -12,13 +12,13 @@ import java.util.List;
 @Component
 public interface TransactionsMapper {
 
-    int insert(TransactionsWithBLOBs record);
+    Integer insert(TransactionsWithBLOBs record);
 
-    int insertSelective(TransactionsWithBLOBs record);
+    Integer insertSelective(TransactionsWithBLOBs record);
 
     TransactionsWithBLOBs selectByPrimaryKey(Long id);
 
-    int batchInsertSelective(List<TransactionsWithBLOBs> transactionsWithBLOBsList);
+    Integer batchInsertSelective(List<TransactionsWithBLOBs> transactionsWithBLOBsList);
 
     ReturnTransactions selectByTxHash(String hash);
 
@@ -30,17 +30,17 @@ public interface TransactionsMapper {
 
     List<ReturnTransactions> selectAll(Long index);
 
-    long selectAll_COUNT();
+    Long selectAll_COUNT();
 
     List<ReturnTransactions> selectByAuthor(@Param("address") String address, @Param("index") Long index);
 
-    long selectCountByAuthor(String address);
+    Long selectCountByAuthor(String address);
 
-    long selectByAuthor_COUNT(String address);
+    Long selectByAuthor_COUNT(String address);
 
     List<ReturnContractTransactions> selectByCreatest(Long index);
 
-    int selectByCreatest_COUNT();
+    Integer selectByCreatest_COUNT();
 
     List<ReturnTransactions> selectForSearchByAuthor(String address);
 

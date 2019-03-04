@@ -9,17 +9,17 @@ import java.util.List;
 @Component
 public interface BlockMapper {
 
-    int deleteByPrimaryKey(Long number);
+    Integer deleteByPrimaryKey(Long number);
 
-    int insert(Block record);
+    Integer insert(Block record);
 
-    int insertSelective(Block record);
+    Integer insertSelective(Block record);
 
     Block selectByPrimaryKey(Long number);
 
-    int updateByPrimaryKeySelective(Block record);
+    Integer updateByPrimaryKeySelective(Block record);
 
-    int updateByPrimaryKey(Block record);
+    Integer updateByPrimaryKey(Block record);
 
     List<ReturnBlock> selectAll(Long index);
 
@@ -27,13 +27,13 @@ public interface BlockMapper {
 
     List<ReturnBlock> selectByAuthor(String author);
 
-    long selectCountByAuthor(String author);
+    Long selectCountByAuthor(String author);
 
     Block selectByHash(String hash);
 
-    int batchInsertSelective(List<Block> blockList);
+    Integer batchInsertSelective(List<Block> blockList);
 
-    long selectAll_COUNT();
+    Long selectallCount();
 
     List<Block> selectByDate(String date);
 }

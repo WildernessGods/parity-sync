@@ -9,19 +9,19 @@ import java.util.List;
 @Component
 public interface BlockUncleMapper {
 
-    int insert(BlockUncle record);
+    Integer insert(BlockUncle record);
 
-    int insertSelective(BlockUncle record);
+    Integer insertSelective(BlockUncle record);
 
     BlockUncle selectByPrimaryKey(String hash);
 
-    int updateByPrimaryKeySelective(BlockUncle record);
+    Integer updateByPrimaryKeySelective(BlockUncle record);
 
-    int updateByPrimaryKey(BlockUncle record);
+    Integer updateByPrimaryKey(BlockUncle record);
 
     List<BlockUncle> selectByUncleByHash(String uncleByHash);
 
     List<ReturnBlockUncle> selectAll();
 
-    long selectCountByAuthor(String address);
+    Long selectCountByAuthor(String address);
 }

@@ -392,7 +392,7 @@
         where number &lt;= (select max(number) from block) - #{index,jdbcType=BIGINT}
         order by number desc
     </select>
-    <select id="selectAll_COUNT" resultType="java.lang.Long">
+    <select id="selectallCount" resultType="java.lang.Long">
         select max(number) + 1
         from block
     </select>
