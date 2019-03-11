@@ -52,7 +52,7 @@ public class AspectParityLog {
                     if (arg != null) {
                         String argName = arg.getClass().getName();
                         ObjectMapper objectMapper = new ObjectMapper();
-                        if (argName.contains("com.uniptt.uniptt_admin.utils.")) {
+                        if (argName.contains("com.parity.paritysync.utils.")) {
                             params = new StringBuilder(objectMapper.writeValueAsString(arg));
                         } else if (argName.contains("java.lang")) {
                             params.append(objectMapper.writeValueAsString(arg)).append(" ");
